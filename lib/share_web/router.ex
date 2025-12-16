@@ -18,6 +18,7 @@ defmodule ShareWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/login", AuthController, :login
   end
 
   # Other scopes may use custom stacks.
