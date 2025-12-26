@@ -94,11 +94,9 @@ defmodule ShareWeb.CoreComponents do
   slot :inner_block, required: true
 
   def button(%{rest: rest} = assigns) do
-    variants = %{"primary" => "btn-primary", nil => "btn-primary btn-soft"}
-
     assigns =
       assign_new(assigns, :class, fn ->
-        ["btn", Map.fetch!(variants, assigns[:variant])]
+        "w-full py-3 px-6 font-semibold text-lg text-white bg-slate-900 rounded-lg shadow-[0px_1px_2px_rgba(0,0,0,0.05)] cursor-pointer transition-all duration-200 hover:bg-[#1e293b] hover:shadow-[0px_4px_12px_rgba(15,23,42,0.3)] active:scale-98 border-none"
       end)
 
     if rest[:href] || rest[:navigate] || rest[:patch] do
@@ -181,6 +179,8 @@ defmodule ShareWeb.CoreComponents do
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
 
+  slot :trailing_block
+
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     errors = if Phoenix.Component.used_input?(field), do: field.errors, else: []
 
@@ -233,20 +233,24 @@ defmodule ShareWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <select
-          id={@id}
-          name={@name}
-          class={[@class || "w-full select", @errors != [] && (@error_class || "select-error")]}
-          multiple={@multiple}
-          {@rest}
-        >
-          <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
-        </select>
+    <div class="mb-6">
+      <label :if={@label} for={@id} class="block font-medium text-sm text-slate-900 mb-2">
+        {@label}
       </label>
+      <select
+        id={@id}
+        name={@name}
+        class={[
+          "w-full py-3 px-4 text-base text-slate-900 bg-white border rounded-lg transition-all duration-200 focus:outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10",
+          @errors == [] && "border-slate-200",
+          @errors != [] && "border-error"
+        ]}
+        multiple={@multiple}
+        {@rest}
+      >
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
+      </select>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -254,19 +258,20 @@ defmodule ShareWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <textarea
-          id={@id}
-          name={@name}
-          class={[
-            @class || "w-full textarea",
-            @errors != [] && (@error_class || "textarea-error")
-          ]}
-          {@rest}
-        >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+    <div class="mb-6">
+      <label :if={@label} for={@id} class="block font-medium text-sm text-slate-900 mb-2">
+        {@label}
       </label>
+      <textarea
+        id={@id}
+        name={@name}
+        class={[
+          "w-full py-3 px-4 text-base text-slate-900 bg-white border rounded-lg transition-all duration-200 focus:outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 placeholder:text-slate-400",
+          @errors == [] && "border-slate-200",
+          @errors != [] && "border-error"
+        ]}
+        {@rest}
+      >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -275,28 +280,32 @@ defmodule ShareWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
+    <div class="mb-6">
+      <label :if={@label} for={@id} class="block font-medium text-sm text-slate-900 mb-2">
+        {@label}
+      </label>
+      <div class="relative w-full">
         <input
           type={@type}
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            @class || "w-full input",
-            @errors != [] && (@error_class || "input-error")
+            "w-full py-3 px-4 text-base text-slate-900 bg-white border rounded-lg transition-all duration-200 focus:outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 placeholder:text-slate-400",
+            @errors == [] && "border-slate-200",
+            @errors != [] && "border-error"
           ]}
           {@rest}
         />
-      </label>
+        {render_slot(@trailing_block)}
+      </div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
 
   # Helper used by inputs to generate form errors
-  defp error(assigns) do
+  def error(assigns) do
     ~H"""
     <p class="mt-1.5 flex gap-2 items-center text-sm text-error">
       <.icon name="hero-exclamation-circle" class="size-5" />

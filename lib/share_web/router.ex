@@ -1,6 +1,8 @@
 defmodule ShareWeb.Router do
   use ShareWeb, :router
 
+  import ShareWeb.UserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule ShareWeb.Router do
     plug :put_root_layout, html: {ShareWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   pipeline :api do
@@ -19,6 +22,8 @@ defmodule ShareWeb.Router do
 
     get "/", PageController, :home
     get "/login", AuthController, :login
+    get "/register", AuthController, :signup
+    post "/register", AuthController, :create
   end
 
   # Other scopes may use custom stacks.

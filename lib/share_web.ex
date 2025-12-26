@@ -43,6 +43,7 @@ defmodule ShareWeb do
       use Gettext, backend: ShareWeb.Gettext
 
       import Plug.Conn
+      import Phoenix.Component, only: [to_form: 1, to_form: 2]
 
       unquote(verified_routes())
     end

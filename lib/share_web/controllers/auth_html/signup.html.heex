@@ -7,18 +7,27 @@
 <!-- Title and Subtitle -->
       <div class="flex flex-col gap-2 items-center text-center">
         <h2 class="font-semibold text-[30px] leading-9 tracking-[-0.225px] text-slate-900 m-0">
-          Welcome Back
+          Create an Account
         </h2>
         <p class="font-normal text-xl text-slate-900 m-0">
-          Share and discover valuable learning resources
+          Join the community and start discovering
         </p>
       </div>
     </div>
     
-<!-- Login Card -->
+<!-- Registration Card -->
     <div class="bg-white border border-black/10 rounded-2xl shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-8">
-      <.form for={@form} action={~p"/login"} id="login-form">
-        <!-- Email Input -->
+      <.form for={@form} action={~p"/register"} id="registration-form">
+        <!-- Full Name Input -->
+        <.input
+          field={@form[:full_name]}
+          type="text"
+          label="Full Name"
+          placeholder="Enter your full name"
+          required
+        />
+        
+<!-- Email Input -->
         <.input
           field={@form[:email]}
           type="email"
@@ -32,7 +41,7 @@
           field={@form[:password]}
           type="password"
           label="Password"
-          placeholder="Enter your password"
+          placeholder="Create a password"
           required
         >
           <:trailing_block>
@@ -81,20 +90,20 @@
           </:trailing_block>
         </.input>
         
-<!-- Login Button -->
+<!-- Submit Button -->
         <.button type="submit">
-          Login
+          Create Account
         </.button>
         
-<!-- Sign Up Link -->
+<!-- Login Link -->
         <div class="mt-6 text-center">
           <p class="text-base text-slate-900 m-0">
-            Don't have an account?
+            Already have an account?
             <a
-              href={~p"/register"}
+              href={~p"/login"}
               class="font-semibold text-slate-900 transition-colors underline hover:text-slate-600"
             >
-              Sign up
+              Log in
             </a>
           </p>
         </div>

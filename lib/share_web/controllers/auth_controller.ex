@@ -1,7 +1,29 @@
 defmodule ShareWeb.AuthController do
   use ShareWeb, :controller
 
+  alias Share.Accounts
+  alias Share.Accounts.User
+
+  alias ShareWeb.UserAuth
+
   def login(conn, _params) do
-    render(conn, :login)
+    render(conn, :login, form: to_form(%{}, as: :auth))
+  end
+
+  def signup(conn, _params) do
+    form = Accounts.change_user(%User{}) |> to_form()
+    render(conn, :signup, form: form)
+  end
+
+  def create(conn, %{"user" => user_params}) do
+    case Accounts.create_user(user_params) do
+      {:ok, user} ->
+        conn
+        |> put_flash(:info, "User created successfully.")
+        |> UserAuth.log_in_user(user)
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        render(conn, :signup, form: to_form(changeset))
+    end
   end
 end
