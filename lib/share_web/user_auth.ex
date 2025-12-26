@@ -18,6 +18,18 @@ defmodule ShareWeb.UserAuth do
     assign(conn, :current_user, user)
   end
 
+  def on_mount(:mount_current_user, _params, session, socket) do
+    {:cont, mount_current_user(socket, session)}
+  end
+
+  defp mount_current_user(socket, session) do
+    Phoenix.Component.assign_new(socket, :current_user, fn ->
+      if user_id = session["user_id"] do
+        Accounts.get_user(user_id)
+      end
+    end)
+  end
+
   defp renew_session(conn) do
     conn
     |> configure_session(renew: true)

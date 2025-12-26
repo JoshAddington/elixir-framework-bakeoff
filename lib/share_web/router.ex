@@ -20,11 +20,13 @@ defmodule ShareWeb.Router do
   scope "/", ShareWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
-    get "/login", AuthController, :login
-    post "/login", AuthController, :create_session
-    get "/register", AuthController, :signup
-    post "/register", AuthController, :create
+    live_session :default, on_mount: [{ShareWeb.UserAuth, :mount_current_user}] do
+      live "/", ResourceLive.Index, :index
+      get "/login", AuthController, :login
+      post "/login", AuthController, :create_session
+      get "/register", AuthController, :signup
+      post "/register", AuthController, :create
+    end
   end
 
   # Other scopes may use custom stacks.
