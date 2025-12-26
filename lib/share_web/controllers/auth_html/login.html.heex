@@ -1,239 +1,132 @@
-<style>
-  .login-page {
-    min-height: 100vh;
-    background-color: #fcfcfc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 1rem;
-  }
-
-  .login-wrapper {
-    width: 100%;
-    max-width: 528px;
-  }
-
-  /* Header Section - Outside the card */
-  .login-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .header-icon-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .header-icon-circle {
-    width: 66px;
-    height: 66px;
-    border-radius: 50%;
-    background-color: #0f172a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 17px 20px;
-  }
-
-  .header-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-    text-align: center;
-  }
-
-  .login-title {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 30px;
-    line-height: 36px;
-    letter-spacing: -0.225px;
-    color: #0f172a;
-    margin: 0;
-  }
-
-  .login-subtitle {
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 28px;
-    letter-spacing: -0.1px;
-    color: #0f172a;
-    margin: 0;
-  }
-
-  /* Login Card */
-  .login-card {
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 16px;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-
-  .form-label {
-    display: block;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 24px;
-    color: #0f172a;
-    margin-bottom: 0.5rem;
-  }
-
-  .form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    color: #0f172a;
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .form-input::placeholder {
-    color: #94a3b8;
-  }
-
-  .form-input:focus {
-    outline: none;
-    border-color: #0f172a;
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
-  }  
-
-  .btn-primary {
-    width: 100%;
-    padding: 0.75rem 1.5rem;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 28px;
-    color: white;
-    background: #0f172a;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-primary:hover {
-    background: #1e293b;
-    box-shadow: 0px 4px 12px rgba(15, 23, 42, 0.3);
-  }
-
-  .btn-primary:active {
-    transform: scale(0.98);
-  }
-
-  .signup-section {
-    margin-top: 1.5rem;
-    text-align: center;
-  }
-
-  .signup-text {
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    line-height: 28px;
-    color: #0f172a;
-    margin: 0;
-  }
-
-  .signup-link {
-    font-weight: 600;
-    color: #0f172a;
-    transition: color 0.2s;
-    text-decoration: underline;
-  }
-
-  .signup-link:hover {
-    color: #475569;
-  }
-</style>
-
-<div class="login-page">
-  <div class="login-wrapper">
+<div class="min-h-screen bg-[#fcfcfc] flex items-center justify-center py-8 px-4">
+  <div class="w-full max-w-[528px]">
     <!-- Header Section (Outside Card) -->
-    <div class="login-header">
-      <!-- Icon -->
-      <div class="header-icon-wrapper">
-        <div class="header-icon-circle">
-          <svg
-            width="26"
-            height="32"
-            viewBox="0 0 26 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10 1V13L14.5 8.5L19 13V1M1 27.25V4.75C1 3.75544 1.39509 2.80161 2.09835 2.09835C2.80161 1.39509 3.75544 1 4.75 1H23.5C23.8978 1 24.2794 1.15804 24.5607 1.43934C24.842 1.72064 25 2.10218 25 2.5V29.5C25 29.8978 24.842 30.2794 24.5607 30.5607C24.2794 30.842 23.8978 31 23.5 31H4.75C3.75544 31 2.80161 30.6049 2.09835 29.9017C1.39509 29.1984 1 28.2446 1 27.25ZM1 27.25C1 26.2554 1.39509 25.3016 2.09835 24.5983C2.80161 23.8951 3.75544 23.5 4.75 23.5H25"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
+    <div class="flex flex-col items-center gap-4 mb-8">
+      <ShareWeb.Components.icon />
       
 <!-- Title and Subtitle -->
-      <div class="header-content">
-        <h2 class="login-title">Welcome Back</h2>
-        <p class="login-subtitle">Share and discover valuable learning resources</p>
+      <div class="flex flex-col gap-2 items-center text-center">
+        <h2 class="font-semibold text-[30px] leading-9 tracking-[-0.225px] text-slate-900 m-0">
+          Welcome Back
+        </h2>
+        <p class="font-normal text-xl text-slate-900 m-0">
+          Share and discover valuable learning resources
+        </p>
       </div>
     </div>
     
 <!-- Login Card -->
-    <div class="login-card">
+    <div class="bg-white border border-black/10 rounded-2xl shadow-[0px_1px_2px_rgba(0,0,0,0.05)] p-8">
       <form>
         <!-- Email Input -->
-        <div class="form-group">
-          <label for="email" class="form-label">Email</label>
+        <div class="mb-6">
+          <label for="email" class="block font-medium text-sm text-slate-900 mb-2">Email</label>
           <input
             type="email"
             id="email"
             name="email"
             placeholder="Enter your email"
-            class="form-input"
+            class="w-full py-3 px-4 text-base text-slate-900 bg-white border border-slate-200 rounded-lg transition-all duration-200 focus:outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 placeholder:text-slate-400"
           />
         </div>
         
 <!-- Password Input -->
-        <div class="form-group">
-          <label for="password" class="form-label">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            class="form-input"
-          />
+        <div class="mb-6">
+          <label for="password" class="block font-medium text-sm text-slate-900 mb-2">
+            Password
+          </label>
+          <div class="relative w-full">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              class="w-full py-3 px-4 pr-12 text-base text-slate-900 bg-white border border-slate-200 rounded-lg transition-all duration-200 focus:outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 placeholder:text-slate-400"
+            />
+            <button
+              type="button"
+              class="absolute right-4 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 text-slate-500 hover:text-slate-900 transition-colors font-medium text-sm"
+              onclick="togglePassword()"
+              aria-label="Toggle password visibility"
+            >
+              <svg
+                id="eye-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                style="width: 20px; height: 20px;"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              <svg
+                id="eye-off-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                style="display: none; width: 20px; height: 20px;"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
         
 <!-- Login Button -->
-        <button type="submit" class="btn-primary">
+        <button
+          type="submit"
+          class="w-full py-3 px-6 font-semibold text-lg text-white bg-slate-900 rounded-lg shadow-[0px_1px_2px_rgba(0,0,0,0.05)] cursor-pointer transition-all duration-200 hover:bg-[#1e293b] hover:shadow-[0px_4px_12px_rgba(15,23,42,0.3)] active:scale-98 border-none"
+        >
           Login
         </button>
         
 <!-- Sign Up Link -->
-        <div class="signup-section">
-          <p class="signup-text">
-            Don't have an account? <a href="#" class="signup-link">Sign up</a>
+        <div class="mt-6 text-center">
+          <p class="text-base text-slate-900 m-0">
+            Don't have an account?
+            <a
+              href="#"
+              class="font-semibold text-slate-900 transition-colors underline hover:text-slate-600"
+            >
+              Sign up
+            </a>
           </p>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<script>
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+    const eyeOffIcon = document.getElementById('eye-off-icon');
+    
+    if (input.type === 'password') {
+      input.type = 'text';
+      eyeIcon.style.display = 'none';
+      eyeOffIcon.style.display = 'block';
+    } else {
+      input.type = 'password';
+      eyeIcon.style.display = 'block';
+      eyeOffIcon.style.display = 'none';
+    }
+  }
+</script>
