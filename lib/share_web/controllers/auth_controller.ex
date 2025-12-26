@@ -10,6 +10,20 @@ defmodule ShareWeb.AuthController do
     render(conn, :login, form: to_form(%{}, as: :auth))
   end
 
+  def create_session(conn, %{"auth" => %{"email" => email, "password" => password}}) do
+    case Accounts.authenticate_user(email, password) do
+      {:ok, user} ->
+        conn
+        |> put_flash(:info, "Welcome back!")
+        |> UserAuth.log_in_user(user)
+
+      {:error, _reason} ->
+        conn
+        |> put_flash(:error, "Invalid email or password.")
+        |> render(:login, form: to_form(%{email: email}, as: :auth))
+    end
+  end
+
   def signup(conn, _params) do
     form = Accounts.change_user(%User{}) |> to_form()
     render(conn, :signup, form: form)

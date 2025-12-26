@@ -39,6 +39,20 @@ defmodule Share.Accounts do
 
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_user_by_email(email) do
+    Repo.get_by(User, email: email)
+  end
+
+  def authenticate_user(email, password) do
+    user = get_user_by_email(email)
+
+    if user && Bcrypt.verify_pass(password, user.password_hash) do
+      {:ok, user}
+    else
+      {:error, :invalid_credentials}
+    end
+  end
+
   @doc """
   Creates a user.
 

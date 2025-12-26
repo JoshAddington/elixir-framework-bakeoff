@@ -22,6 +22,7 @@ defmodule ShareWeb.Router do
 
     get "/", PageController, :home
     get "/login", AuthController, :login
+    post "/login", AuthController, :create_session
     get "/register", AuthController, :signup
     post "/register", AuthController, :create
   end
