@@ -76,7 +76,14 @@ defmodule ShareWeb.ResourceLive.FormComponent do
           >
             Cancel
           </.link>
-          <button class="grow bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm text-center font-bold shadow-lg shadow-slate-900/10 hover:bg-slate-800 hover:-translate-y-0.5 transition-all">
+          <button
+            disabled={!@is_form_valid}
+            class={[
+              "cursor-pointer grow bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm text-center font-bold shadow-lg shadow-slate-900/10 transition-all",
+              @is_form_valid && "hover:bg-slate-800 hover:-translate-y-0.5",
+              !@is_form_valid && "opacity-50 cursor-not-allowed"
+            ]}
+          >
             Share
           </button>
         </div>
@@ -101,17 +108,26 @@ defmodule ShareWeb.ResourceLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:tags_value, tags_value)}
+     |> assign(:tags_value, tags_value)
+     |> assign(:is_form_valid, false)}
   end
 
   @impl true
-  def handle_event("validate", %{"resource" => resource_params}, socket) do
+  def handle_event("validate", %{"resource" => resource_params} = params, socket) do
+    tags = params["tags"] || ""
+
     changeset =
       socket.assigns.resource
       |> Knowledge.change_resource(resource_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    is_form_valid = changeset.valid? && tags != ""
+
+    {:noreply,
+     socket
+     |> assign_form(changeset)
+     |> assign(:tags_value, tags)
+     |> assign(:is_form_valid, is_form_valid)}
   end
 
   @impl true
