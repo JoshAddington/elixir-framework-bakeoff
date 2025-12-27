@@ -8,6 +8,7 @@ defmodule ShareWeb.Router do
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, html: {ShareWeb.Layouts, :root}
+    plug :put_layout, html: {ShareWeb.Layouts, :app}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
@@ -20,8 +21,11 @@ defmodule ShareWeb.Router do
   scope "/", ShareWeb do
     pipe_through :browser
 
-    live_session :default, on_mount: [{ShareWeb.UserAuth, :mount_current_user}] do
+    live_session :default,
+      on_mount: [{ShareWeb.UserAuth, :mount_current_user}],
+      layout: {ShareWeb.Layouts, :app} do
       live "/", ResourceLive.Index, :index
+      live "/new", ResourceLive.Index, :new
       get "/login", AuthController, :login
       post "/login", AuthController, :create_session
       get "/register", AuthController, :signup

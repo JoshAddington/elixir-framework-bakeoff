@@ -1,12 +1,14 @@
 defmodule ShareWeb.Components do
   use Phoenix.Component
 
+  attr :classname, :string, default: ""
+
   def icon(assigns) do
     ~H"""
-    <div class="w-[66px] h-[66px] rounded-full bg-[#0f172a] flex items-center justify-center p-5">
+    <div class={"#{@classname} rounded-full bg-[#0f172a] flex items-center justify-center shrink-0"}>
       <svg
-        width="26"
-        height="32"
+        width="40%"
+        height="50%"
         viewBox="0 0 26 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
