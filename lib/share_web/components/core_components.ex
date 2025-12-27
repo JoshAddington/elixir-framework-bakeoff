@@ -56,23 +56,41 @@ defmodule ShareWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class={[
+        "fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-[1280px] px-4",
+        @kind == :info && "animate-slide-down",
+        @kind == :error && "animate-slide-down"
+      ]}
       {@rest}
     >
       <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap",
-        @kind == :info && "alert-info",
-        @kind == :error && "alert-error"
+        "w-full flex items-center gap-4 p-4 rounded-2xl shadow-sm border border-black/5",
+        @kind == :info && "bg-[#F8F8F8] text-slate-900",
+        @kind == :error && "bg-rose-50 text-rose-900"
       ]}>
-        <.icon :if={@kind == :info} name="hero-information-circle" class="size-5 shrink-0" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle" class="size-5 shrink-0" />
-        <div>
-          <p :if={@title} class="font-semibold">{@title}</p>
-          <p>{msg}</p>
+        <div
+          :if={@kind == :info}
+          class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center shrink-0"
+        >
+          <.icon name="hero-check" class="w-5 h-5 text-white stroke-2" />
         </div>
-        <div class="flex-1" />
-        <button type="button" class="group self-start cursor-pointer" aria-label={gettext("close")}>
-          <.icon name="hero-x-mark" class="size-5 opacity-40 group-hover:opacity-70" />
+        <.icon
+          :if={@kind == :error}
+          name="hero-exclamation-circle"
+          class="w-8 h-8 text-rose-600 shrink-0"
+        />
+
+        <div class="flex-1">
+          <p :if={@title} class="font-bold text-sm">{@title}</p>
+          <p class="font-semibold text-sm">{msg}</p>
+        </div>
+
+        <button
+          type="button"
+          class="group flex-none p-2 -m-2 opacity-40 hover:opacity-100 transition-opacity"
+          aria-label={gettext("close")}
+        >
+          <.icon name="hero-x-mark" class="w-5 h-5" />
         </button>
       </div>
     </div>

@@ -139,15 +139,6 @@ defmodule ShareWeb.ResourceLive.FormComponent do
       |> Enum.map(&String.trim/1)
       |> Enum.reject(&(&1 == ""))
       |> Enum.uniq()
-      # Format for create_resource/2? No, likely assumes pure strings or existing tag structs.
-      |> Enum.map(&%{name: &1})
-
-    # Wait, create_resource expects existing Tag structs or maps?
-    # Looking at `Share.Knowledge.create_resource` -> `changeset` -> `Repo.insert`.
-    # And `changeset` calls `put_assoc(:tags, tags)`.
-    # `put_assoc` can handle maps formatted as `%{name: "tagname"}` and will create them if they don't exist?
-    # Actually, `put_assoc` creates NEW records by default if maps are passed. It does NOT automatically find-or-create by generic fields.
-    # We need to look up existing tags and create new ones.
 
     save_resource(socket, socket.assigns.action, resource_params, tags)
   end
