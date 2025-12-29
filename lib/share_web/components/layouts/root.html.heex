@@ -13,6 +13,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css"
+    />
+
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
@@ -39,4 +44,11 @@
   <body>
     {@inner_content}
   </body>
+  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/highlight.min.js">
+  </script>
+  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/languages/elixir.min.js">
+  </script>
+  <script>
+    hljs.highlightAll();
+  </script>
 </html>
