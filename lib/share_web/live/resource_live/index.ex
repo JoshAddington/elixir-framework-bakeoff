@@ -50,6 +50,12 @@ defmodule ShareWeb.ResourceLive.Index do
     |> assign(:resource, nil)
   end
 
+  defp apply_action(socket, :show, %{"id" => id}) do
+    socket
+    |> assign(:page_title, "Show Resource")
+    |> assign(:resource, Knowledge.get_resource!(id))
+  end
+
   def handle_event("toggle-type", %{"type" => type}, socket) do
     current_types = socket.assigns.active_types
 

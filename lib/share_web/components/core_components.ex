@@ -479,10 +479,11 @@ defmodule ShareWeb.CoreComponents do
   """
   attr :name, :string, required: true
   attr :class, :any, default: "size-4"
+  attr :rest, :global
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
-    <span class={[@name, @class]} />
+    <span class={[@name, @class]} {@rest} />
     """
   end
 
@@ -618,5 +619,97 @@ defmodule ShareWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  @doc """
+  Renders a drawer (slide-over).
+  """
+  attr :id, :string, required: true
+  attr :show, :boolean, default: false
+  attr :on_cancel, :any, default: %JS{}
+  slot :inner_block, required: true
+
+  def drawer(assigns) do
+    ~H"""
+    <div
+      id={@id}
+      phx-mounted={@show && show_drawer(@id)}
+      phx-remove={hide_drawer(@id)}
+      data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      class="relative z-50 hidden"
+    >
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-slate-900/50 transition-opacity"
+        aria-hidden="true"
+      />
+      <div class="fixed inset-0 overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div
+              id={"#{@id}-content"}
+              class="pointer-events-auto w-screen max-w-[518px] transform transition ease-in-out duration-500 sm:duration-700 translate-x-full"
+            >
+              <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl py-6">
+                <div class="px-4 sm:px-6">
+                  <div class="flex items-start justify-end">
+                    <div class="ml-3 flex h-7 items-center">
+                      <button
+                        type="button"
+                        class="relative rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                        phx-click={JS.exec("data-cancel", to: "##{@id}")}
+                      >
+                        <span class="absolute -inset-2.5"></span>
+                        <span class="sr-only">Close panel</span>
+                        <.icon name="hero-x-mark" class="h-6 w-6" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                  {render_slot(@inner_block)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def show_drawer(js \\ %JS{}, id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.remove_class("hidden", to: "##{id}")
+    |> JS.show(
+      to: "##{id}-bg",
+      transition: {"transition-all transform ease-out duration-500", "opacity-0", "opacity-100"}
+    )
+    |> JS.show(
+      to: "##{id}-content",
+      transition:
+        {"transform transition ease-in-out duration-500 sm:duration-700", "translate-x-full",
+         "translate-x-0"}
+    )
+    |> JS.add_class("overflow-hidden", to: "body")
+    |> JS.focus_first(to: "##{id}-content")
+  end
+
+  def hide_drawer(js \\ %JS{}, id) do
+    js
+    |> JS.hide(
+      to: "##{id}-bg",
+      transition: {"transition-all transform ease-in duration-500", "opacity-100", "opacity-0"}
+    )
+    |> JS.hide(
+      to: "##{id}-content",
+      transition:
+        {"transform transition ease-in-out duration-500 sm:duration-700", "translate-x-0",
+         "translate-x-full"}
+    )
+    |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
+    |> JS.remove_class("overflow-hidden", to: "body")
+    |> JS.pop_focus()
   end
 end

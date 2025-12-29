@@ -26,6 +26,7 @@ defmodule ShareWeb.Router do
       layout: {ShareWeb.Layouts, :app} do
       live "/", ResourceLive.Index, :index
       live "/new", ResourceLive.Index, :new
+      live "/resources/:id", ResourceLive.Index, :show
       get "/login", AuthController, :login
       post "/login", AuthController, :create_session
       get "/register", AuthController, :signup
