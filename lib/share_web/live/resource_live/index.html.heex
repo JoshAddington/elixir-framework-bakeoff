@@ -254,10 +254,10 @@
 <.modal :if={@live_action in [:new]} id="resource-modal" show on_cancel={JS.patch(~p"/")}>
   <.live_component
     module={ShareWeb.ResourceLive.FormComponent}
-    id={@resource.id || :new}
+    id={(@resource && @resource.id) || :new}
     title={@page_title}
     action={@live_action}
-    resource={@resource}
+    resource={@resource || %Share.Knowledge.Resource{}}
     current_user={@current_user}
     patch={~p"/"}
   />

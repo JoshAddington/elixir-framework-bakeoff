@@ -18,9 +18,16 @@ defmodule Share.Knowledge do
     |> preload([:user, :tags])
     |> filter_by_type(filters["type"])
     |> filter_by_tag(filters["tag"])
+    |> filter_by_user(filters["user_id"])
     |> order_by([r], desc: r.inserted_at)
     |> Repo.all()
   end
+
+  defp filter_by_user(query, user_id) when is_integer(user_id) or is_binary(user_id) do
+    where(query, [r], r.user_id == ^user_id)
+  end
+
+  defp filter_by_user(query, _), do: query
 
   defp filter_by_type(query, types) when is_list(types) and types != [] do
     where(query, [r], r.type in ^types)

@@ -29,6 +29,11 @@ defmodule ShareWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: ShareWeb.Gettext
 
+  use Phoenix.VerifiedRoutes,
+    endpoint: ShareWeb.Endpoint,
+    router: ShareWeb.Router,
+    statics: ShareWeb.static_paths()
+
   alias Phoenix.LiveView.JS
 
   @doc """
@@ -43,6 +48,7 @@ defmodule ShareWeb.CoreComponents do
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+  attr :current_user, :any, default: nil
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -84,6 +90,14 @@ defmodule ShareWeb.CoreComponents do
           <p :if={@title} class="font-bold text-sm">{@title}</p>
           <p class="font-semibold text-sm">{msg}</p>
         </div>
+
+        <.link
+          :if={msg == "New resource successfully added!" && @current_user}
+          navigate={~p"/?user_id=#{@current_user.id}"}
+          class="shrink-0 text-sm font-bold text-slate-900 border border-slate-200 bg-white px-3 py-1.5 rounded-lg shadow-sm hover:bg-slate-50 transition-colors"
+        >
+          View Your Resources
+        </.link>
 
         <button
           type="button"

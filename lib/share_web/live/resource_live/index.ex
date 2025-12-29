@@ -26,14 +26,16 @@ defmodule ShareWeb.ResourceLive.Index do
       end
 
     tag = params["tag"]
+    user_id = params["user_id"]
 
-    resources = Knowledge.list_resources(%{"type" => types, "tag" => tag})
+    resources = Knowledge.list_resources(%{"type" => types, "tag" => tag, "user_id" => user_id})
 
     {:noreply,
      socket
      |> assign(:resources, resources)
      |> assign(:active_types, types)
-     |> assign(:active_tag, tag)}
+     |> assign(:active_tag, tag)
+     |> assign(:active_user_id, user_id)}
   end
 
   defp apply_action(socket, :new, _params) do
