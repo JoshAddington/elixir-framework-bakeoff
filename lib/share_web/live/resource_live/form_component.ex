@@ -57,13 +57,37 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
         <div class="flex flex-col gap-2">
           <label class="text-sm font-bold text-slate-700">Tags</label>
-          <input
-            type="text"
-            name="tags"
-            value={@tags_value}
-            placeholder="Add tags"
-            class="w-full rounded-xl border-slate-200 focus:border-slate-900 focus:ring-slate-900/10 transition-all text-slate-900 placeholder:text-slate-400"
-          />
+          <div class="flex gap-2">
+            <div class="flex-1 flex flex-wrap items-center gap-2 p-1.5 min-h-[46px] bg-white border border-slate-200 rounded-xl focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/10 transition-all">
+              <div
+                :for={tag <- @selected_tags}
+                class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold border border-slate-200 group/tag transition-colors hover:bg-slate-200"
+              >
+                {tag}
+                <button
+                  type="button"
+                  phx-click="remove-tag"
+                  phx-value-tag={tag}
+                  phx-target={@myself}
+                  class="p-0.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all"
+                >
+                  <.icon name="hero-x-mark" class="size-3 stroke-[3]" />
+                </button>
+              </div>
+              <input
+                type="text"
+                name="current_tag"
+                value={@current_tag}
+                placeholder={if Enum.empty?(@selected_tags), do: "Add tags...", else: ""}
+                phx-keyup="tag-keypress"
+                phx-keydown="tag-keydown"
+                phx-blur="add-tag"
+                phx-target={@myself}
+                phx-change="tag-input"
+                class="flex-1 min-w-[120px] bg-transparent border-none focus:ring-0 text-sm text-slate-900 placeholder:text-slate-400 p-1"
+              />
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col gap-2">
@@ -114,55 +138,87 @@ defmodule ShareWeb.ResourceLive.FormComponent do
   def update(%{resource: resource} = assigns, socket) do
     changeset = Knowledge.change_resource(resource)
 
-    # Initialize tags_value if editing (not strictly needed for create-only but good practice)
-    tags_value =
+    selected_tags =
       if Ecto.assoc_loaded?(resource.tags) do
-        resource.tags |> Enum.map(& &1.name) |> Enum.join(", ")
+        Enum.map(resource.tags, & &1.name)
       else
-        ""
+        []
       end
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:tags_value, tags_value)
+     |> assign(:selected_tags, selected_tags)
+     |> assign(:current_tag, "")
      |> assign(:is_form_valid, false)}
   end
 
   @impl true
-  def handle_event("validate", %{"resource" => resource_params} = params, socket) do
-    tags = params["tags"] || ""
+  def handle_event("tag-input", %{"current_tag" => value}, socket) do
+    {:noreply, assign(socket, :current_tag, value)}
+  end
 
+  def handle_event("tag-keypress", %{"key" => "Enter"}, socket) do
+    add_tag(socket)
+  end
+
+  def handle_event("tag-keypress", _params, socket), do: {:noreply, socket}
+
+  def handle_event("tag-keydown", %{"key" => "Backspace", "value" => ""}, socket) do
+    case socket.assigns.selected_tags do
+      [] ->
+        {:noreply, socket}
+
+      tags ->
+        new_tags = Enum.slice(tags, 0..-2//1)
+        {:noreply, assign(socket, :selected_tags, new_tags)}
+    end
+  end
+
+  def handle_event("tag-keydown", _params, socket), do: {:noreply, socket}
+
+  def handle_event("add-tag", _params, socket) do
+    add_tag(socket)
+  end
+
+  def handle_event("remove-tag", %{"tag" => tag}, socket) do
+    new_tags = List.delete(socket.assigns.selected_tags, tag)
+    {:noreply, assign(socket, :selected_tags, new_tags)}
+  end
+
+  @impl true
+  def handle_event("validate", %{"resource" => resource_params}, socket) do
     changeset =
       socket.assigns.resource
       |> Knowledge.change_resource(resource_params)
       |> Map.put(:action, :validate)
 
-    is_form_valid = changeset.valid? && tags != ""
+    is_form_valid = changeset.valid? && !Enum.empty?(socket.assigns.selected_tags)
 
     {:noreply,
      socket
      |> assign_form(changeset)
-     |> assign(:tags_value, tags)
      |> assign(:is_form_valid, is_form_valid)}
   end
 
   @impl true
-  def handle_event("save", %{"resource" => resource_params, "tags" => tags_string}, socket) do
-    # Simple tag parsing: split by comma, trim, unique
-    tags =
-      tags_string
-      |> String.split(",")
-      |> Enum.map(&String.trim/1)
-      |> Enum.reject(&(&1 == ""))
-      |> Enum.uniq()
+  def handle_event("save", %{"resource" => resource_params}, socket) do
+    save_resource(socket, socket.assigns.action, resource_params, socket.assigns.selected_tags)
+  end
 
-    save_resource(socket, socket.assigns.action, resource_params, tags)
+  defp add_tag(socket) do
+    tag = socket.assigns.current_tag |> String.trim()
+
+    if tag != "" && tag not in socket.assigns.selected_tags do
+      new_tags = socket.assigns.selected_tags ++ [tag]
+      {:noreply, assign(socket, selected_tags: new_tags, current_tag: "")}
+    else
+      {:noreply, assign(socket, current_tag: "")}
+    end
   end
 
   defp save_resource(socket, :new, resource_params, tag_names) do
-    # We need to manually resolve tags first
     # 1. Find existing tags
     existing_tags = Knowledge.get_tags_by_names(tag_names)
     existing_names = Enum.map(existing_tags, & &1.name)
@@ -170,20 +226,15 @@ defmodule ShareWeb.ResourceLive.FormComponent do
     # 2. Identify new tags
     new_names = tag_names -- existing_names
 
-    # 3. Create new tags (simple loop for now, or insert_all but we need IDs back, loop with changesets is safer for validation)
+    # 3. Create new tags
     new_tags =
       new_names
       |> Enum.map(fn name ->
         with {:ok, tag} <- Knowledge.create_tag(%{name: name}), do: tag
       end)
-      # Filter out any failures (though user might want to know)
       |> Enum.filter(&match?(%Share.Knowledge.Tag{}, &1))
 
     all_tags = existing_tags ++ new_tags
-
-    # Now create resource with these TAG STRUCTS
-    # BUT `create_resource` takes (attrs, tags) and calls `put_assoc(:tags, tags)`.
-    # `put_assoc` works with schemas.
 
     case Knowledge.create_resource(resource_params, all_tags) do
       {:ok, _resource} ->
