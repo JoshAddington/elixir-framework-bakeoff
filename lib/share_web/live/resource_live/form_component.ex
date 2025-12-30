@@ -65,7 +65,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
             <div class="flex flex-wrap items-center gap-2 p-1.5 min-h-[46px] bg-white border border-slate-200 rounded-xl focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/10 transition-all">
               <div
                 :for={tag <- @selected_tags}
-                class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold border border-slate-200 group/tag transition-colors hover:bg-slate-200"
+                class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 bg-slate-900 text-white rounded-lg text-xs font-bold transition-colors"
               >
                 {tag}
                 <button
@@ -73,7 +73,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
                   phx-click="remove-tag"
                   phx-value-tag={tag}
                   phx-target={@myself}
-                  class="p-0.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all"
+                  class="p-0.5 rounded-md text-slate-400 hover:text-white transition-all"
                 >
                   <.icon name="hero-x-mark" class="size-3 stroke-[3]" />
                 </button>
