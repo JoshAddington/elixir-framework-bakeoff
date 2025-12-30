@@ -101,4 +101,8 @@ defmodule ShareWeb.ResourceLive.Index do
 
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
+
+  def handle_event("reset-filters", _params, socket) do
+    {:noreply, push_patch(socket, to: ~p"/")}
+  end
 end

@@ -1,105 +1,134 @@
 <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14">
   <div class="flex flex-col lg:flex-row gap-16">
     <!-- Sidebar -->
-    <aside class="w-full lg:w-64 shrink-0">
-      <div class="sticky top-28 flex flex-col gap-12">
-        <!-- Resource Type Filter -->
-        <div class="flex flex-col gap-5">
-          <div class="flex items-center justify-between">
-            <h3 class="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
-              Resource Type
-            </h3>
-            <button
-              :if={@active_types != []}
-              phx-click="clear-types"
-              class="text-[10px] font-bold text-slate-400 hover:text-slate-900 uppercase tracking-widest transition-colors"
-            >
-              Clear
-            </button>
+    <aside class="w-full lg:w-72 shrink-0">
+      <div class="sticky top-28 flex flex-col gap-8">
+        <div class="bg-white p-8 rounded-[32px] shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)] border border-black/5 flex flex-col gap-8">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400">
+                Filters
+              </h2>
+              <button
+                :if={@active_types != [] || @active_tag}
+                phx-click="reset-filters"
+                class="text-[10px] font-bold text-slate-400 hover:text-slate-900 uppercase tracking-widest transition-colors"
+              >
+                Reset filters
+              </button>
+            </div>
+            
+<!-- Resource Type Filter -->
+            <div class="flex flex-col gap-5">
+              <div class="flex items-center justify-between">
+                <h3 class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+                  Resource Type
+                </h3>
+                <button
+                  :if={@active_types != []}
+                  phx-click="clear-types"
+                  class="text-[10px] font-bold text-slate-400 hover:text-slate-900 uppercase tracking-widest transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+              <div class="flex flex-col gap-4">
+                <label class="flex items-center gap-3.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    phx-click="toggle-type"
+                    phx-value-type="article"
+                    checked={"article" in @active_types}
+                    class="w-5 h-5 rounded-[6px] border-slate-300 bg-white text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
+                  />
+                  <span class={[
+                    "text-sm font-bold transition-colors",
+                    "article" in @active_types && "text-slate-900",
+                    "article" not in @active_types && "text-slate-500 group-hover:text-slate-900"
+                  ]}>
+                    Articles
+                  </span>
+                </label>
+                <label class="flex items-center gap-3.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    phx-click="toggle-type"
+                    phx-value-type="snippet"
+                    checked={"snippet" in @active_types}
+                    class="w-5 h-5 rounded-[6px] border-slate-300 bg-white text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
+                  />
+                  <span class={[
+                    "text-sm font-bold transition-colors",
+                    "snippet" in @active_types && "text-slate-900",
+                    "snippet" not in @active_types && "text-slate-500 group-hover:text-slate-900"
+                  ]}>
+                    Code Snippets
+                  </span>
+                </label>
+                <label class="flex items-center gap-3.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    phx-click="toggle-type"
+                    phx-value-type="resource"
+                    checked={"resource" in @active_types}
+                    class="w-5 h-5 rounded-[6px] border-slate-300 bg-white text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
+                  />
+                  <span class={[
+                    "text-sm font-bold transition-colors",
+                    "resource" in @active_types && "text-slate-900",
+                    "resource" not in @active_types && "text-slate-500 group-hover:text-slate-900"
+                  ]}>
+                    Learning Resources
+                  </span>
+                </label>
+              </div>
+            </div>
           </div>
-          <div class="flex flex-col gap-4">
-            <label class="flex items-center gap-3.5 cursor-pointer group">
-              <input
-                type="checkbox"
-                phx-click="toggle-type"
-                phx-value-type="article"
-                checked={"article" in @active_types}
-                class="w-5 h-5 rounded-[6px] border-slate-300 text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
-              />
-              <span class={[
-                "text-sm font-bold transition-colors",
-                "article" in @active_types && "text-slate-900",
-                "article" not in @active_types && "text-slate-500 group-hover:text-slate-900"
-              ]}>
-                Articles
-              </span>
-            </label>
-            <label class="flex items-center gap-3.5 cursor-pointer group">
-              <input
-                type="checkbox"
-                phx-click="toggle-type"
-                phx-value-type="snippet"
-                checked={"snippet" in @active_types}
-                class="w-5 h-5 rounded-[6px] border-slate-300 text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
-              />
-              <span class={[
-                "text-sm font-bold transition-colors",
-                "snippet" in @active_types && "text-slate-900",
-                "snippet" not in @active_types && "text-slate-500 group-hover:text-slate-900"
-              ]}>
-                Code Snippets
-              </span>
-            </label>
-            <label class="flex items-center gap-3.5 cursor-pointer group">
-              <input
-                type="checkbox"
-                phx-click="toggle-type"
-                phx-value-type="resource"
-                checked={"resource" in @active_types}
-                class="w-5 h-5 rounded-[6px] border-slate-300 text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
-              />
-              <span class={[
-                "text-sm font-bold transition-colors",
-                "resource" in @active_types && "text-slate-900",
-                "resource" not in @active_types && "text-slate-500 group-hover:text-slate-900"
-              ]}>
-                Learning Resources
-              </span>
-            </label>
+          
+<!-- Tags Filter -->
+          <div class="flex flex-col gap-5">
+            <div class="flex items-center justify-between">
+              <h3 class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+                Tags
+              </h3>
+              <button
+                :if={@active_tag}
+                phx-click="clear-tag"
+                class="text-[10px] font-bold text-slate-400 hover:text-slate-900 uppercase tracking-widest transition-colors"
+              >
+                Clear
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-2.5">
+              <button
+                :for={tag <- @tags}
+                phx-click="filter-tag"
+                phx-value-tag={tag.name}
+                class={[
+                  "px-4 py-2 rounded-xl text-xs font-bold transition-all border",
+                  @active_tag == tag.name &&
+                    "bg-slate-900 text-white border-slate-900 shadow-[0px_4px_12px_rgba(15,23,42,0.2)]",
+                  @active_tag != tag.name &&
+                    "bg-white text-slate-500 border-slate-200 hover:border-slate-900 hover:text-slate-900 hover:bg-slate-50"
+                ]}
+              >
+                #{tag.name}
+              </button>
+            </div>
+            <p :if={Enum.empty?(@tags)} class="text-xs text-slate-400 italic">
+              No tags discovery yet
+            </p>
           </div>
         </div>
         
-<!-- Tags Filter -->
-        <div class="flex flex-col gap-5">
-          <div class="flex items-center justify-between">
-            <h3 class="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">Tags</h3>
-            <button
-              :if={@active_tag}
-              phx-click="clear-tag"
-              class="text-[10px] font-bold text-slate-400 hover:text-slate-900 uppercase tracking-widest transition-colors"
-            >
-              Clear
-            </button>
-          </div>
-          <div class="flex flex-wrap gap-2.5">
-            <button
-              :for={tag <- @tags}
-              phx-click="filter-tag"
-              phx-value-tag={tag.name}
-              class={[
-                "px-4 py-2 rounded-xl text-xs font-bold transition-all border",
-                @active_tag == tag.name &&
-                  "bg-slate-900 text-white border-slate-900 shadow-[0px_4px_12px_rgba(15,23,42,0.2)]",
-                @active_tag != tag.name &&
-                  "bg-white text-slate-500 border-slate-200 hover:border-slate-900 hover:text-slate-900 hover:bg-slate-50"
-              ]}
-            >
-              #{tag.name}
-            </button>
-          </div>
-          <p :if={Enum.empty?(@tags)} class="text-xs text-slate-400 italic">
-            No tags discovery yet
-          </p>
+<!-- View Your Resources Button -->
+        <div :if={@current_user} class="pt-4">
+          <.link
+            navigate={~p"/?user_id=#{@current_user.id}"}
+            class="flex items-center justify-center w-full px-6 py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 hover:-translate-y-0.5 transition-all shadow-lg shadow-slate-900/10"
+          >
+            View Your Resources
+          </.link>
         </div>
       </div>
     </aside>
