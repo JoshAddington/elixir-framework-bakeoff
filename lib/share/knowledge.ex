@@ -19,9 +19,26 @@ defmodule Share.Knowledge do
     |> filter_by_type(filters["type"])
     |> filter_by_tag(filters["tag"])
     |> filter_by_user(filters["user_id"])
+    |> filter_by_query(filters["q"])
     |> order_by([r], desc: r.inserted_at)
     |> Repo.all()
   end
+
+  defp filter_by_query(query, search_term) when is_binary(search_term) and search_term != "" do
+    search_term = "%#{search_term}%"
+
+    query
+    |> join(:left, [r], t in assoc(r, :tags), as: :search_tags)
+    |> where(
+      [r, search_tags: t],
+      ilike(r.title, ^search_term) or
+        ilike(r.description, ^search_term) or
+        ilike(t.name, ^search_term)
+    )
+    |> distinct(true)
+  end
+
+  defp filter_by_query(query, _), do: query
 
   defp filter_by_user(query, user_id) when is_integer(user_id) or is_binary(user_id) do
     where(query, [r], r.user_id == ^user_id)

@@ -12,7 +12,8 @@ defmodule ShareWeb.ResourceLive.Index do
      |> assign(:resources, resources)
      |> assign(:tags, tags)
      |> assign(:active_types, [])
-     |> assign(:active_tag, nil)}
+     |> assign(:active_tag, nil)
+     |> assign(:deleting_resource, nil)}
   end
 
   def handle_params(params, _url, socket) do
@@ -27,15 +28,23 @@ defmodule ShareWeb.ResourceLive.Index do
 
     tag = params["tag"]
     user_id = params["user_id"]
+    query = params["q"]
 
-    resources = Knowledge.list_resources(%{"type" => types, "tag" => tag, "user_id" => user_id})
+    resources =
+      Knowledge.list_resources(%{
+        "type" => types,
+        "tag" => tag,
+        "user_id" => user_id,
+        "q" => query
+      })
 
     {:noreply,
      socket
      |> assign(:resources, resources)
      |> assign(:active_types, types)
      |> assign(:active_tag, tag)
-     |> assign(:active_user_id, user_id)}
+     |> assign(:active_user_id, user_id)
+     |> assign(:search_query, query)}
   end
 
   defp apply_action(socket, :new, _params) do
@@ -62,12 +71,22 @@ defmodule ShareWeb.ResourceLive.Index do
     |> assign(:resource, Knowledge.get_resource!(id))
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("open-delete-modal", %{"id" => id}, socket) do
     resource = Knowledge.get_resource!(id)
+    {:noreply, assign(socket, :deleting_resource, resource)}
+  end
+
+  def handle_event("close-delete-modal", _params, socket) do
+    {:noreply, assign(socket, :deleting_resource, nil)}
+  end
+
+  def handle_event("delete", _params, socket) do
+    resource = socket.assigns.deleting_resource
     {:ok, _} = Knowledge.delete_resource(resource)
 
     {:noreply,
      socket
+     |> assign(:deleting_resource, nil)
      |> put_flash(:info, "Resource deleted successfully")
      |> push_navigate(to: ~p"/")}
   end
@@ -120,6 +139,27 @@ defmodule ShareWeb.ResourceLive.Index do
 
   def handle_event("reset-filters", _params, socket) do
     {:noreply, push_patch(socket, to: ~p"/")}
+  end
+
+  def handle_event("search", %{"q" => query}, socket) do
+    params = %{"q" => query}
+
+    params =
+      if socket.assigns.active_types != [],
+        do: Map.put(params, "types", socket.assigns.active_types),
+        else: params
+
+    params =
+      if socket.assigns.active_tag,
+        do: Map.put(params, "tag", socket.assigns.active_tag),
+        else: params
+
+    params =
+      if socket.assigns.active_user_id,
+        do: Map.put(params, "user_id", socket.assigns.active_user_id),
+        else: params
+
+    {:noreply, push_patch(socket, to: ~p"/?#{params}", replace: true)}
   end
 
   defp format_timestamp(dt) do
