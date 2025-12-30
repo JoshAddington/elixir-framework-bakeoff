@@ -16,7 +16,7 @@ defmodule Share.Knowledge do
   def list_resources(filters \\ %{}) do
     Resource
     |> preload([:user, :tags])
-    |> filter_by_type(filters["type"])
+    |> filter_by_type(filters["types"])
     |> filter_by_tag(filters["tag"])
     |> filter_by_user(filters["user_id"])
     |> filter_by_query(filters["q"])
@@ -40,7 +40,8 @@ defmodule Share.Knowledge do
 
   defp filter_by_query(query, _), do: query
 
-  defp filter_by_user(query, user_id) when is_integer(user_id) or is_binary(user_id) do
+  defp filter_by_user(query, user_id)
+       when (is_integer(user_id) or is_binary(user_id)) and user_id != "" do
     where(query, [r], r.user_id == ^user_id)
   end
 
