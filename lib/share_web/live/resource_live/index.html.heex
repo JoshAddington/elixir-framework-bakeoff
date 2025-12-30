@@ -250,7 +250,12 @@
   </div>
 </div>
 
-<.modal :if={@live_action in [:new]} id="resource-modal" show on_cancel={JS.patch(~p"/")}>
+<.drawer
+  :if={@live_action in [:new]}
+  id="resource-modal"
+  show
+  on_cancel={JS.patch(~p"/")}
+>
   <.live_component
     module={ShareWeb.ResourceLive.FormComponent}
     id={(@resource && @resource.id) || :new}
@@ -260,7 +265,7 @@
     current_user={@current_user}
     patch={~p"/"}
   />
-</.modal>
+</.drawer>
 
 <.drawer
   :if={@live_action == :show && @resource}

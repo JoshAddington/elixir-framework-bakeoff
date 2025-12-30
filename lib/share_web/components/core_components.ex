@@ -516,9 +516,16 @@ defmodule ShareWeb.CoreComponents do
       phx-mounted={@show && show_modal(@id)}
       phx-remove={hide_modal(@id)}
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
+      phx-key="escape"
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-zinc-50/90 transition-opacity cursor-pointer"
+        aria-hidden="true"
+        phx-click={JS.exec("data-cancel", to: "##{@id}")}
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -527,16 +534,16 @@ defmodule ShareWeb.CoreComponents do
         aria-modal="true"
         tabindex="0"
       >
-        <div class="flex min-h-full items-center justify-end p-4 sm:p-6">
-          <div class="w-full max-w-xl overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-zinc-900/5 sm:p-6 transition-all transform scale-100 opacity-100">
-            <.button
-              phx-click={JS.exec("data-cancel", to: "##{@id}")}
+        <div class="flex min-h-full items-center justify-center p-4 sm:p-6">
+          <div class="w-full max-w-xl overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-zinc-900/5 sm:p-6 transition-all transform scale-100 opacity-100 relative">
+            <button
               type="button"
-              class="-m-3 flex-none p-3 opacity-20 hover:opacity-40 absolute right-5 top-5 bg-transparent shadow-none hover:bg-transparent hover:shadow-none"
-              aria-label={gettext("close")}
+              class="absolute top-6 right-6 z-10 p-2 rounded-full bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+              phx-click={JS.exec("data-cancel", to: "##{@id}")}
             >
-              <.icon name="hero-x-mark" class="h-5 w-5" />
-            </.button>
+              <span class="sr-only">Close</span>
+              <.icon name="hero-x-mark" class="h-5 w-5 stroke-2" aria-hidden="true" />
+            </button>
             <div id={"#{@id}-content"}>
               {render_slot(@inner_block)}
             </div>
@@ -636,12 +643,15 @@ defmodule ShareWeb.CoreComponents do
       phx-mounted={@show && show_drawer(@id)}
       phx-remove={hide_drawer(@id)}
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
+      phx-key="escape"
       class="relative z-50 hidden"
     >
       <div
         id={"#{@id}-bg"}
-        class="fixed inset-0 bg-slate-900/50 transition-opacity"
+        class="fixed inset-0 bg-slate-900/50 transition-opacity cursor-pointer"
         aria-hidden="true"
+        phx-click={JS.exec("data-cancel", to: "##{@id}")}
       />
       <div class="fixed inset-0 overflow-hidden">
         <div class="absolute inset-0 overflow-hidden">
@@ -650,22 +660,15 @@ defmodule ShareWeb.CoreComponents do
               id={"#{@id}-content"}
               class="pointer-events-auto w-screen max-w-[518px] transform transition ease-in-out duration-500 sm:duration-700 translate-x-full"
             >
-              <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl py-6">
-                <div class="px-4 sm:px-6">
-                  <div class="flex items-start justify-end">
-                    <div class="ml-3 flex h-7 items-center">
-                      <button
-                        type="button"
-                        class="relative rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
-                        phx-click={JS.exec("data-cancel", to: "##{@id}")}
-                      >
-                        <span class="absolute -inset-2.5"></span>
-                        <span class="sr-only">Close panel</span>
-                        <.icon name="hero-x-mark" class="h-6 w-6" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+              <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl py-6 relative">
+                <button
+                  type="button"
+                  class="absolute top-6 right-6 z-10 p-2 rounded-full bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                  phx-click={JS.exec("data-cancel", to: "##{@id}")}
+                >
+                  <span class="sr-only">Close panel</span>
+                  <.icon name="hero-x-mark" class="h-5 w-5 stroke-2" aria-hidden="true" />
+                </button>
                 <div class="relative mt-6 flex-1 px-4 sm:px-6">
                   {render_slot(@inner_block)}
                 </div>
