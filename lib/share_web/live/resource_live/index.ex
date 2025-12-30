@@ -13,6 +13,8 @@ defmodule ShareWeb.ResourceLive.Index do
      |> assign(:tags, tags)
      |> assign(:active_types, [])
      |> assign(:active_tag, nil)
+     |> assign(:active_user_id, nil)
+     |> assign(:search_query, nil)
      |> assign(:deleting_resource, nil)}
   end
 

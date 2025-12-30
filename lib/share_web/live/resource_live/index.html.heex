@@ -4,9 +4,12 @@
     <header class="flex flex-col gap-8">
       <div class="flex flex-col gap-2">
         <h1 class="text-[32px] sm:text-[40px] font-bold text-slate-900 tracking-[-0.03em] m-0 leading-tight">
-          Discover Resources
+          {if @active_user_id, do: "Your Resources", else: "Discover Resources"}
         </h1>
-        <p class="text-slate-500 text-lg sm:text-xl font-medium max-w-2xl leading-relaxed">
+        <p
+          :if={!@active_user_id}
+          class="text-slate-500 text-lg sm:text-xl font-medium max-w-2xl leading-relaxed"
+        >
           Explore shared knowledge from our community
         </p>
       </div>
