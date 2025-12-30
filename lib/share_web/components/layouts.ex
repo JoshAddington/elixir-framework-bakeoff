@@ -21,7 +21,6 @@ defmodule ShareWeb.Layouts do
   def flash_group(assigns) do
     ~H"""
     <div id={@id} aria-live="polite">
-      <.flash kind={:info} flash={@flash} current_user={@current_user} />
       <.flash kind={:error} flash={@flash} />
 
       <.flash

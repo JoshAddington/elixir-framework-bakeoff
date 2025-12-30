@@ -91,7 +91,7 @@ defmodule ShareWeb.ResourceLive.Index do
     {:noreply,
      socket
      |> assign(:deleting_resource, nil)
-     |> put_flash(:info, "Resource deleted successfully")
+     |> put_flash(:info, "Resource deleted!")
      |> push_navigate(to: ~p"/?#{socket.assigns.current_filters}")}
   end
 
