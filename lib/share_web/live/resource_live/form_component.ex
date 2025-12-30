@@ -9,7 +9,9 @@ defmodule ShareWeb.ResourceLive.FormComponent do
     <div class="flex flex-col gap-6">
       <div class="flex flex-col gap-1">
         <h2 class="text-2xl font-bold text-slate-900">Share a resource</h2>
-        <p class="text-slate-500">Contribute to the knowledge base by sharing valuable content</p>
+        <p class="text-sm text-slate-500">
+          Contribute to the knowledge base by sharing valuable content
+        </p>
       </div>
 
       <.form
@@ -88,7 +90,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
         <div class="flex items-center justify-end gap-3 mt-4">
           <.link
             patch={@patch}
-            class="grow text-sm font-bold border border-slate-200 rounded-xl text-slate-500 text-center hover:text-slate-900 px-4 py-2 transition-colors"
+            class="grow text-sm font-bold bg-white border border-slate-200 rounded-xl text-slate-500 text-center hover:text-slate-900 px-4 py-2 transition-colors"
           >
             Cancel
           </.link>

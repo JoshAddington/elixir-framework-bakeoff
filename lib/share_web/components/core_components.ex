@@ -527,7 +527,7 @@ defmodule ShareWeb.CoreComponents do
         phx-click={JS.exec("data-cancel", to: "##{@id}")}
       />
       <div
-        class="fixed inset-0 overflow-y-auto"
+        class="fixed inset-0 overflow-y-auto pointer-events-none"
         aria-labelledby={"#{@id}-title"}
         aria-describedby={"#{@id}-description"}
         role="dialog"
@@ -535,7 +535,7 @@ defmodule ShareWeb.CoreComponents do
         tabindex="0"
       >
         <div class="flex min-h-full items-center justify-center p-4 sm:p-6">
-          <div class="w-full max-w-xl overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-zinc-900/5 sm:p-6 transition-all transform scale-100 opacity-100 relative">
+          <div class="w-full max-w-xl overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-zinc-900/5 sm:p-6 transition-all transform scale-100 opacity-100 relative pointer-events-auto">
             <button
               type="button"
               class="absolute top-6 right-6 z-10 p-2 rounded-full bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-slate-900/10"
@@ -653,8 +653,8 @@ defmodule ShareWeb.CoreComponents do
         aria-hidden="true"
         phx-click={JS.exec("data-cancel", to: "##{@id}")}
       />
-      <div class="fixed inset-0 overflow-hidden">
-        <div class="absolute inset-0 overflow-hidden">
+      <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
           <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
             <div
               id={"#{@id}-content"}
@@ -684,16 +684,14 @@ defmodule ShareWeb.CoreComponents do
   def show_drawer(js \\ %JS{}, id) do
     js
     |> JS.show(to: "##{id}")
-    |> JS.remove_class("hidden", to: "##{id}")
     |> JS.show(
       to: "##{id}-bg",
-      transition: {"transition-all transform ease-out duration-500", "opacity-0", "opacity-100"}
+      transition: {"transition-all ease-in-out duration-500", "opacity-0", "opacity-100"}
     )
     |> JS.show(
       to: "##{id}-content",
       transition:
-        {"transform transition ease-in-out duration-500 sm:duration-700", "translate-x-full",
-         "translate-x-0"}
+        {"transition-transform ease-in-out duration-500", "translate-x-full", "translate-x-0"}
     )
     |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id}-content")
@@ -703,15 +701,14 @@ defmodule ShareWeb.CoreComponents do
     js
     |> JS.hide(
       to: "##{id}-bg",
-      transition: {"transition-all transform ease-in duration-500", "opacity-100", "opacity-0"}
+      transition: {"transition-all ease-in-out duration-500", "opacity-100", "opacity-0"}
     )
     |> JS.hide(
       to: "##{id}-content",
       transition:
-        {"transform transition ease-in-out duration-500 sm:duration-700", "translate-x-0",
-         "translate-x-full"}
+        {"transition-transform ease-in-out duration-500", "translate-x-0", "translate-x-full"}
     )
-    |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
+    |> JS.hide(to: "##{id}", time: 500)
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
   end
