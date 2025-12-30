@@ -121,4 +121,17 @@ defmodule ShareWeb.ResourceLive.Index do
   def handle_event("reset-filters", _params, socket) do
     {:noreply, push_patch(socket, to: ~p"/")}
   end
+
+  defp format_timestamp(dt) do
+    today = Date.utc_today()
+    inserted_date = NaiveDateTime.to_date(dt)
+    diff = Date.diff(today, inserted_date)
+
+    cond do
+      diff <= 0 -> "Today"
+      diff == 1 -> "Yesterday"
+      diff < 7 -> "#{diff} days ago"
+      true -> Calendar.strftime(dt, "%b %d, %Y")
+    end
+  end
 end

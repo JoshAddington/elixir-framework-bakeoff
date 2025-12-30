@@ -178,59 +178,72 @@
                 <.icon name="hero-trash" class="w-4 h-4" />
               </button>
             </div>
-            <div class="flex items-start justify-between gap-6">
-              <div class="flex flex-col gap-3">
-                <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
-                  {String.upcase(resource.type)}
-                </span>
-                <h2 class="text-2xl font-bold text-slate-900 leading-[1.2] group-hover:text-slate-600 transition-colors">
-                  {resource.title}
-                </h2>
-              </div>
-              <div class="bg-slate-50 p-4 rounded-[18px] text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-all shrink-0">
+            <div class="flex items-center gap-3">
+              <div class="bg-slate-50 p-3 rounded-xl text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-100 transition-all shrink-0">
                 <.icon
                   :if={resource.type == "article"}
                   name="hero-newspaper"
-                  class="w-7 h-7 stroke-[1.8]"
+                  class="w-5 h-5 stroke-[1.8]"
                 />
                 <.icon
                   :if={resource.type == "snippet"}
                   name="hero-code-bracket"
-                  class="w-7 h-7 stroke-[1.8]"
+                  class="w-5 h-5 stroke-[1.8]"
                 />
                 <.icon
                   :if={resource.type == "resource"}
                   name="hero-academic-cap"
-                  class="w-7 h-7 stroke-[1.8]"
+                  class="w-5 h-5 stroke-[1.8]"
                 />
+              </div>
+              <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+                {String.upcase(resource.type)}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-3">
+              <h2 class="text-2xl font-bold text-slate-900 leading-[1.2] group-hover:text-slate-600 transition-colors">
+                {resource.title}
+              </h2>
+              <div class="flex flex-col gap-1.5">
+                <p class="text-base text-slate-500 line-clamp-2 leading-[1.6]">
+                  {resource.description}
+                </p>
+                <div class="flex items-center gap-1.5 text-sm font-bold text-slate-900 hover:underline">
+                  View {resource.type}
+                  <.icon name="hero-arrow-right-mini" class="w-4 h-4" />
+                </div>
               </div>
             </div>
 
-            <p class="text-base text-slate-500 line-clamp-2 leading-[1.6]">
-              {resource.description}
-            </p>
+            <div class="flex flex-wrap gap-2">
+              <span
+                :for={tag <- resource.tags}
+                class="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg uppercase tracking-wider"
+              >
+                #{tag.name}
+              </span>
+            </div>
 
-            <div class="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between gap-4">
-              <div class="flex flex-wrap gap-2">
-                <span
-                  :for={tag <- resource.tags}
-                  class="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg uppercase tracking-wider"
-                >
-                  #{tag.name}
-                </span>
-              </div>
+            <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between gap-4">
               <div class="flex items-center gap-3 shrink-0">
-                <div class="flex flex-col items-end">
+                <div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center text-[10px] text-slate-900 font-bold ring-1 ring-black/5">
+                  {String.at(resource.user.full_name, 0)}
+                </div>
+                <div class="flex flex-col">
                   <span class="text-xs font-bold text-slate-900 leading-none">
-                    {resource.user.full_name}
+                    {if @current_user && resource.user_id == @current_user.id,
+                      do: "You",
+                      else: resource.user.full_name}
                   </span>
                   <span class="text-[10px] text-slate-400 mt-1 font-semibold uppercase tracking-wider">
                     Author
                   </span>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-slate-900 border-[3px] border-white shadow-md flex items-center justify-center text-xs text-white font-bold ring-1 ring-black/5">
-                  {String.at(resource.user.full_name, 0)}
-                </div>
+              </div>
+
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                {format_timestamp(resource.inserted_at)}
               </div>
             </div>
           </div>
