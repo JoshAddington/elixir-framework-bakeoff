@@ -112,7 +112,8 @@ defmodule Share.Knowledge do
   Starts a query to get tags by name.
   """
   def get_tags_by_names(names) do
-    Repo.all(from t in Tag, where: t.name in ^names)
+    names = Enum.map(names, &String.downcase/1)
+    Repo.all(from t in Tag, where: fragment("lower(?)", t.name) in ^names)
   end
 
   @doc """

@@ -61,8 +61,8 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
         <div class="flex flex-col gap-2">
           <label class="text-sm font-bold text-slate-700">Tags</label>
-          <div class="flex gap-2">
-            <div class="flex-1 flex flex-wrap items-center gap-2 p-1.5 min-h-[46px] bg-white border border-slate-200 rounded-xl focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/10 transition-all">
+          <div class="relative">
+            <div class="flex flex-wrap items-center gap-2 p-1.5 min-h-[46px] bg-white border border-slate-200 rounded-xl focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/10 transition-all">
               <div
                 :for={tag <- @selected_tags}
                 class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold border border-slate-200 group/tag transition-colors hover:bg-slate-200"
@@ -81,15 +81,36 @@ defmodule ShareWeb.ResourceLive.FormComponent do
               <input
                 type="text"
                 name="current_tag"
+                id="tag-input-field"
                 value={@current_tag}
                 placeholder={if Enum.empty?(@selected_tags), do: "Add tags...", else: ""}
-                phx-keyup="tag-keypress"
                 phx-keydown="tag-keydown"
                 phx-blur="add-tag"
                 phx-target={@myself}
                 phx-change="tag-input"
                 class="flex-1 min-w-[120px] bg-transparent border-none focus:ring-0 text-sm text-slate-900 placeholder:text-slate-400 p-1"
               />
+            </div>
+            
+    <!-- Autocomplete Dropdown -->
+            <div
+              :if={!Enum.empty?(@suggested_tags)}
+              class="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden py-1"
+            >
+              <button
+                :for={{tag, index} <- Enum.with_index(@suggested_tags)}
+                type="button"
+                phx-click="select-suggestion"
+                phx-value-tag={tag}
+                phx-target={@myself}
+                class={[
+                  "w-full text-left px-4 py-2 text-sm transition-colors",
+                  @focused_index == index && "bg-slate-900 text-white font-bold",
+                  @focused_index != index && "text-slate-700 hover:bg-slate-50"
+                ]}
+              >
+                {tag}
+              </button>
             </div>
           </div>
         </div>
@@ -149,25 +170,77 @@ defmodule ShareWeb.ResourceLive.FormComponent do
         []
       end
 
+    all_tags =
+      Knowledge.list_tags()
+      |> Enum.map(& &1.name)
+      |> Enum.sort()
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
      |> assign(:selected_tags, selected_tags)
      |> assign(:current_tag, "")
+     |> assign(:all_tags, all_tags)
+     |> assign(:suggested_tags, [])
+     |> assign(:focused_index, -1)
      |> assign(:is_form_valid, assigns.action == :edit)}
   end
 
   @impl true
   def handle_event("tag-input", %{"current_tag" => value}, socket) do
-    {:noreply, assign(socket, :current_tag, value)}
+    suggested_tags =
+      if String.trim(value) == "" do
+        []
+      else
+        socket.assigns.all_tags
+        |> Enum.filter(fn tag ->
+          String.starts_with?(String.downcase(tag), String.downcase(value)) &&
+            !Enum.any?(socket.assigns.selected_tags, fn s ->
+              String.downcase(s) == String.downcase(tag)
+            end)
+        end)
+        |> Enum.take(10)
+      end
+
+    {:noreply,
+     socket
+     |> assign(:current_tag, value)
+     |> assign(:suggested_tags, suggested_tags)
+     |> assign(:focused_index, -1)}
   end
 
-  def handle_event("tag-keypress", %{"key" => "Enter"}, socket) do
-    add_tag(socket)
+  def handle_event("tag-keydown", %{"key" => "Enter"}, socket) do
+    if socket.assigns.focused_index >= 0 &&
+         socket.assigns.focused_index < length(socket.assigns.suggested_tags) do
+      tag = Enum.at(socket.assigns.suggested_tags, socket.assigns.focused_index)
+      add_tag(socket, tag)
+    else
+      add_tag(socket)
+    end
   end
 
-  def handle_event("tag-keypress", _params, socket), do: {:noreply, socket}
+  def handle_event("tag-keydown", %{"key" => "ArrowDown"}, socket) do
+    if Enum.empty?(socket.assigns.suggested_tags) do
+      {:noreply, socket}
+    else
+      new_index = min(socket.assigns.focused_index + 1, length(socket.assigns.suggested_tags) - 1)
+      {:noreply, assign(socket, :focused_index, new_index)}
+    end
+  end
+
+  def handle_event("tag-keydown", %{"key" => "ArrowUp"}, socket) do
+    if Enum.empty?(socket.assigns.suggested_tags) do
+      {:noreply, socket}
+    else
+      new_index = max(socket.assigns.focused_index - 1, 0)
+      {:noreply, assign(socket, :focused_index, new_index)}
+    end
+  end
+
+  def handle_event("tag-keydown", %{"key" => "Escape"}, socket) do
+    {:noreply, assign(socket, suggested_tags: [], focused_index: -1)}
+  end
 
   def handle_event("tag-keydown", %{"key" => "Backspace", "value" => ""}, socket) do
     case socket.assigns.selected_tags do
@@ -185,6 +258,10 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
   def handle_event("add-tag", _params, socket) do
     add_tag(socket)
+  end
+
+  def handle_event("select-suggestion", %{"tag" => tag}, socket) do
+    add_tag(socket, tag)
   end
 
   def handle_event("remove-tag", %{"tag" => tag}, socket) do
@@ -219,17 +296,24 @@ defmodule ShareWeb.ResourceLive.FormComponent do
     save_resource(socket, socket.assigns.action, resource_params, socket.assigns.selected_tags)
   end
 
-  defp add_tag(socket) do
-    tag = socket.assigns.current_tag |> String.trim()
+  defp add_tag(socket, tag_name \\ nil) do
+    tag = (tag_name || socket.assigns.current_tag) |> String.trim()
 
-    if tag != "" && tag not in socket.assigns.selected_tags do
+    already_selected? =
+      Enum.any?(socket.assigns.selected_tags, fn s ->
+        String.downcase(s) == String.downcase(tag)
+      end)
+
+    if tag != "" && !already_selected? do
       new_tags = socket.assigns.selected_tags ++ [tag]
       is_form_valid = socket.assigns.form.source.valid? && !Enum.empty?(new_tags)
 
       {:noreply,
-       assign(socket, selected_tags: new_tags, current_tag: "", is_form_valid: is_form_valid)}
+       socket
+       |> assign(selected_tags: new_tags, current_tag: "", is_form_valid: is_form_valid)
+       |> assign(suggested_tags: [], focused_index: -1)}
     else
-      {:noreply, assign(socket, current_tag: "")}
+      {:noreply, assign(socket, current_tag: "", suggested_tags: [], focused_index: -1)}
     end
   end
 
@@ -266,11 +350,11 @@ defmodule ShareWeb.ResourceLive.FormComponent do
   end
 
   defp resolve_tags(existing_tags, tag_names) do
-    existing_names = Enum.map(existing_tags, & &1.name)
-    new_names = tag_names -- existing_names
+    existing_names_down = Enum.map(existing_tags, &String.downcase(&1.name))
 
     new_tags =
-      new_names
+      tag_names
+      |> Enum.reject(fn name -> String.downcase(name) in existing_names_down end)
       |> Enum.map(fn name ->
         with {:ok, tag} <- Knowledge.create_tag(%{name: name}), do: tag
       end)
