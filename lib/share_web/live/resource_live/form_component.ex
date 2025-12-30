@@ -67,24 +67,15 @@ defmodule ShareWeb.ResourceLive.FormComponent do
         <div class="flex flex-col gap-2">
           <%= if Ecto.Changeset.get_field(@form.source, :type) == "snippet" do %>
             <label class="text-sm font-bold text-slate-700">Code Snippet</label>
-            <div
-              id="code-editor"
-              phx-hook="Highlight"
-              class="relative w-full h-[300px] bg-[#0d1117] rounded-xl border border-slate-900 overflow-hidden focus-within:ring-2 focus-within:ring-slate-900/10 focus-within:border-slate-900"
-            >
-              <pre
-                id="code-preview"
-                phx-update="ignore"
-                class="absolute inset-0 w-full h-full m-0 p-4 font-mono text-sm text-slate-300 overflow-auto custom-scrollbar pointer-events-none"
-              ><code class="language-elixir !bg-transparent !p-0 block min-h-full"></code></pre>
+            <div class="relative">
               <textarea
                 name={@form[:url].name}
                 id={@form[:url].id}
-                class="absolute inset-0 w-full h-full bg-transparent text-transparent caret-white p-4 font-mono text-sm border-none focus:ring-0 resize-none z-10 overflow-auto custom-scrollbar"
+                class="w-full h-[300px] bg-[#0d1117] text-slate-300 font-mono text-sm p-4 rounded-xl border border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all custom-scrollbar resize-none"
                 placeholder="Paste your code snippet here..."
                 spellcheck="false"
               ><%= Phoenix.HTML.Form.normalize_value("textarea", @form[:url].value) %></textarea>
-              <div class="absolute top-3 right-3 px-2 py-1 rounded bg-white/10 text-[10px] font-mono text-white/50 pointer-events-none z-20">
+              <div class="absolute top-3 right-3 px-2 py-1 rounded bg-white/10 text-[10px] font-mono text-white/50 pointer-events-none">
                 CODE
               </div>
             </div>

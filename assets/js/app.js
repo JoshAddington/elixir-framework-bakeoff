@@ -31,31 +31,6 @@ const liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: {
     ...colocatedHooks,
-    Highlight: {
-      mounted() {
-        this.input = this.el.querySelector("textarea")
-        this.code = this.el.querySelector("pre code")
-        this.pre = this.el.querySelector("pre")
-
-        this.update()
-        this.input.addEventListener("input", () => this.update())
-        this.input.addEventListener("scroll", () => this.syncScroll())
-      },
-      update() {
-        if (!this.code || !this.input) return;
-        // Escape HTML to prevent injection and ensuring display matches
-        this.code.innerText = this.input.value
-        if (this.input.value.endsWith("\n")) {
-          this.code.innerText += "\n" // Preservation of trailing newline
-        }
-        hljs.highlightElement(this.code)
-      },
-      syncScroll() {
-        if (!this.pre || !this.input) return;
-        this.pre.scrollTop = this.input.scrollTop
-        this.pre.scrollLeft = this.input.scrollLeft
-      }
-    },
     SyntaxHighlight: {
       mounted() {
         this.highlight()
