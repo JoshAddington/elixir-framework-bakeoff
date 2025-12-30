@@ -167,7 +167,7 @@
 <!-- Sidebar - View Your Resources Button -->
           <div :if={@current_user} class="pt-4">
             <.link
-              navigate={~p"/?user_id=#{@current_user.id}"}
+              patch={~p"/?user_id=#{@current_user.id}"}
               class="flex items-center justify-center w-full px-6 py-3.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 hover:-translate-y-0.5 transition-all shadow-lg shadow-slate-900/10"
             >
               View Your Resources
@@ -184,7 +184,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div
             :for={resource <- @resources}
-            phx-click={JS.patch(~p"/resources/#{resource}")}
+            phx-click={JS.patch(~p"/resources/#{resource}?#{@current_filters}")}
             class="group relative bg-white border border-black/5 rounded-[32px] p-8 shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)] hover:shadow-[0px_32px_64px_-16px_rgba(15,23,42,0.12)] hover:-translate-y-2 transition-all duration-500 flex flex-col gap-7 cursor-pointer"
           >
             
@@ -194,7 +194,7 @@
               class="absolute top-8 right-8 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all z-10"
             >
               <.link
-                patch={~p"/resources/#{resource}/edit"}
+                patch={~p"/resources/#{resource}/edit?#{@current_filters}"}
                 phx-click-stop-propagation
                 class="p-2 rounded-lg bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all"
                 title="Edit resource"
@@ -320,7 +320,7 @@
   :if={@live_action in [:new, :edit]}
   id="resource-modal"
   show
-  on_cancel={JS.patch(~p"/")}
+  on_cancel={JS.patch(~p"/?#{@current_filters}")}
 >
   <.live_component
     module={ShareWeb.ResourceLive.FormComponent}
@@ -329,7 +329,7 @@
     action={@live_action}
     resource={@resource || %Share.Knowledge.Resource{}}
     current_user={@current_user}
-    patch={~p"/"}
+    patch={~p"/?#{@current_filters}"}
   />
 </.drawer>
 
@@ -337,7 +337,7 @@
   :if={@live_action == :show && @resource}
   id="resource-drawer"
   show
-  on_cancel={JS.patch(~p"/")}
+  on_cancel={JS.patch(~p"/?#{@current_filters}")}
 >
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4">

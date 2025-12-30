@@ -32,13 +32,14 @@ defmodule ShareWeb.ResourceLive.Index do
     user_id = params["user_id"]
     query = params["q"]
 
-    resources =
-      Knowledge.list_resources(%{
-        "type" => types,
-        "tag" => tag,
-        "user_id" => user_id,
-        "q" => query
-      })
+    current_filters = %{
+      "types" => types,
+      "tag" => tag,
+      "user_id" => user_id,
+      "q" => query
+    }
+
+    resources = Knowledge.list_resources(current_filters)
 
     {:noreply,
      socket
@@ -46,7 +47,8 @@ defmodule ShareWeb.ResourceLive.Index do
      |> assign(:active_types, types)
      |> assign(:active_tag, tag)
      |> assign(:active_user_id, user_id)
-     |> assign(:search_query, query)}
+     |> assign(:search_query, query)
+     |> assign(:current_filters, current_filters)}
   end
 
   defp apply_action(socket, :new, _params) do
@@ -90,7 +92,7 @@ defmodule ShareWeb.ResourceLive.Index do
      socket
      |> assign(:deleting_resource, nil)
      |> put_flash(:info, "Resource deleted successfully")
-     |> push_navigate(to: ~p"/")}
+     |> push_navigate(to: ~p"/?#{socket.assigns.current_filters}")}
   end
 
   def handle_event("toggle-type", %{"type" => type}, socket) do
@@ -103,64 +105,38 @@ defmodule ShareWeb.ResourceLive.Index do
         [type | current_types]
       end
 
-    params = %{}
-    params = if new_types != [], do: Map.put(params, "types", new_types), else: params
-
-    params =
-      if socket.assigns.active_tag,
-        do: Map.put(params, "tag", socket.assigns.active_tag),
-        else: params
-
+    params = socket.assigns.current_filters |> Map.put("types", new_types)
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   def handle_event("clear-types", _params, socket) do
-    params = if socket.assigns.active_tag, do: %{"tag" => socket.assigns.active_tag}, else: %{}
+    params = socket.assigns.current_filters |> Map.delete("types")
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   def handle_event("filter-tag", %{"tag" => tag}, socket) do
-    params =
-      if socket.assigns.active_types != [],
-        do: %{"types" => socket.assigns.active_types},
-        else: %{}
-
+    params = socket.assigns.current_filters
     params = if tag == socket.assigns.active_tag, do: params, else: Map.put(params, "tag", tag)
-
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   def handle_event("clear-tag", _params, socket) do
+    params = socket.assigns.current_filters |> Map.delete("tag")
+    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
+  end
+
+  def handle_event("reset-filters", _params, socket) do
+    # Only keep user_id when resetting filters, effectively staying in "Your Resources" if already there
     params =
-      if socket.assigns.active_types != [],
-        do: %{"types" => socket.assigns.active_types},
+      if socket.assigns.active_user_id,
+        do: %{"user_id" => socket.assigns.active_user_id},
         else: %{}
 
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
-  def handle_event("reset-filters", _params, socket) do
-    {:noreply, push_patch(socket, to: ~p"/")}
-  end
-
   def handle_event("search", %{"q" => query}, socket) do
-    params = %{"q" => query}
-
-    params =
-      if socket.assigns.active_types != [],
-        do: Map.put(params, "types", socket.assigns.active_types),
-        else: params
-
-    params =
-      if socket.assigns.active_tag,
-        do: Map.put(params, "tag", socket.assigns.active_tag),
-        else: params
-
-    params =
-      if socket.assigns.active_user_id,
-        do: Map.put(params, "user_id", socket.assigns.active_user_id),
-        else: params
-
+    params = socket.assigns.current_filters |> Map.put("q", query)
     {:noreply, push_patch(socket, to: ~p"/?#{params}", replace: true)}
   end
 
