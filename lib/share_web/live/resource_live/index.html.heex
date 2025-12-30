@@ -48,7 +48,7 @@
           <div class="bg-white p-8 rounded-[16px] shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)] border border-black/5 flex flex-col gap-8">
             <div>
               <div class="flex items-center justify-between mb-6">
-                <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400">
+                <h2 class="text-sm font-bold tracking-wider text-slate-400">
                   Filters
                 </h2>
                 <button
@@ -63,7 +63,7 @@
 <!-- Sidebar - Resource Type Filter -->
               <div class="flex flex-col gap-5">
                 <div class="flex items-center justify-between">
-                  <h3 class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+                  <h3 class="text-[11px] font-bold tracking-[0.15em] text-slate-400">
                     Resource Type
                   </h3>
                   <button
@@ -133,7 +133,7 @@
 <!-- Sidebar - Tags Filter -->
             <div class="flex flex-col gap-5">
               <div class="flex items-center justify-between">
-                <h3 class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+                <h3 class="text-[11px] font-bold tracking-[0.15em] text-slate-400">
                   Tags
                 </h3>
                 <button
@@ -180,8 +180,10 @@
       
 <!-- Main Content -->
       <main class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 text-slate-400 font-bold text-[13px] uppercase tracking-wider mb-4">
-          {Enum.count(@resources)} resources found
+        <div class="flex items-center gap-2 text-slate-400 font-bold text-[13px]  tracking-wider mb-4">
+          {Enum.count(@resources)} resources {if @active_user_id,
+            do: "you've added",
+            else: "found"}
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div
@@ -231,7 +233,7 @@
                   class="w-5 h-5 stroke-[1.8]"
                 />
               </div>
-              <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+              <span class="text-[11px] font-bold tracking-[0.15em] text-slate-400">
                 {String.upcase(resource.type)}
               </span>
             </div>
@@ -254,9 +256,9 @@
             <div class="flex flex-wrap gap-2">
               <span
                 :for={tag <- resource.tags}
-                class="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg uppercase tracking-wider"
+                class="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg tracking-wider"
               >
-                #{tag.name}
+                {tag.name}
               </span>
             </div>
 
@@ -274,7 +276,7 @@
                 </div>
               </div>
 
-              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <div class="text-[11px] font-bold text-slate-400 capitalize tracking-wider">
                 {format_timestamp(resource.inserted_at)}
               </div>
             </div>
@@ -341,7 +343,7 @@
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4">
       <div class="flex items-center gap-3">
-        <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+        <span class="text-[11px] font-bold tracking-[0.15em] text-slate-400">
           {@resource.type}
         </span>
         <span class="w-1 h-1 rounded-full bg-slate-300"></span>
@@ -357,9 +359,9 @@
       <div class="flex flex-wrap gap-2">
         <span
           :for={tag <- @resource.tags}
-          class="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg uppercase tracking-wider"
+          class="text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg tracking-wider"
         >
-          #{tag.name}
+          {tag.name}
         </span>
       </div>
     </div>
@@ -373,7 +375,7 @@
     <div class="border-t border-slate-100 pt-8">
       <%= if @resource.type == "snippet" do %>
         <div class="flex flex-col gap-3">
-          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">
+          <label class="text-xs font-bold tracking-wider text-slate-400">
             Code Snippet
           </label>
           <div class="relative bg-[#0d1117] rounded-xl border border-slate-900 overflow-hidden">
