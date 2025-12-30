@@ -56,6 +56,22 @@ defmodule ShareWeb.ResourceLive.Index do
     |> assign(:resource, Knowledge.get_resource!(id))
   end
 
+  defp apply_action(socket, :edit, %{"id" => id}) do
+    socket
+    |> assign(:page_title, "Edit Resource")
+    |> assign(:resource, Knowledge.get_resource!(id))
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    resource = Knowledge.get_resource!(id)
+    {:ok, _} = Knowledge.delete_resource(resource)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Resource deleted successfully")
+     |> push_navigate(to: ~p"/")}
+  end
+
   def handle_event("toggle-type", %{"type" => type}, socket) do
     current_types = socket.assigns.active_types
 

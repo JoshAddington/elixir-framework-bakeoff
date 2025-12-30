@@ -27,6 +27,7 @@ defmodule ShareWeb.Router do
       live "/", ResourceLive.Index, :index
       live "/new", ResourceLive.Index, :new
       live "/resources/:id", ResourceLive.Index, :show
+      live "/resources/:id/edit", ResourceLive.Index, :edit
       get "/login", AuthController, :login
       post "/login", AuthController, :create_session
       get "/register", AuthController, :signup

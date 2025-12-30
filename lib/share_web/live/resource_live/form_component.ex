@@ -8,9 +8,13 @@ defmodule ShareWeb.ResourceLive.FormComponent do
     ~H"""
     <div class="flex flex-col gap-6">
       <div class="flex flex-col gap-1">
-        <h2 class="text-2xl font-bold text-slate-900">Share a resource</h2>
+        <h2 class="text-2xl font-bold text-slate-900">
+          {if @action == :edit, do: "Edit resource", else: "Share a resource"}
+        </h2>
         <p class="text-sm text-slate-500">
-          Contribute to the knowledge base by sharing valuable content
+          {if @action == :edit,
+            do: "Update your shared resource with current information",
+            else: "Contribute to the knowledge base by sharing valuable content"}
         </p>
       </div>
 
@@ -126,7 +130,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
               !@is_form_valid && "opacity-50 cursor-not-allowed"
             ]}
           >
-            Share
+            {if @action == :edit, do: "Save changes", else: "Share"}
           </button>
         </div>
       </.form>
@@ -151,7 +155,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
      |> assign_form(changeset)
      |> assign(:selected_tags, selected_tags)
      |> assign(:current_tag, "")
-     |> assign(:is_form_valid, false)}
+     |> assign(:is_form_valid, socket.assigns[:action] == :edit || false)}
   end
 
   @impl true
@@ -215,6 +219,32 @@ defmodule ShareWeb.ResourceLive.FormComponent do
       {:noreply, assign(socket, selected_tags: new_tags, current_tag: "")}
     else
       {:noreply, assign(socket, current_tag: "")}
+    end
+  end
+
+  defp save_resource(socket, :edit, resource_params, tag_names) do
+    existing_tags = Knowledge.get_tags_by_names(tag_names)
+    existing_names = Enum.map(existing_tags, & &1.name)
+    new_names = tag_names -- existing_names
+
+    new_tags =
+      new_names
+      |> Enum.map(fn name ->
+        with {:ok, tag} <- Knowledge.create_tag(%{name: name}), do: tag
+      end)
+      |> Enum.filter(&match?(%Share.Knowledge.Tag{}, &1))
+
+    all_tags = existing_tags ++ new_tags
+
+    case Knowledge.update_resource(socket.assigns.resource, resource_params, all_tags) do
+      {:ok, _resource} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Resource updated successfully!")
+         |> push_navigate(to: socket.assigns.patch)}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
