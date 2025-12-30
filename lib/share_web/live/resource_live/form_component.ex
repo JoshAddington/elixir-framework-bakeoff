@@ -155,7 +155,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
      |> assign_form(changeset)
      |> assign(:selected_tags, selected_tags)
      |> assign(:current_tag, "")
-     |> assign(:is_form_valid, socket.assigns[:action] == :edit || false)}
+     |> assign(:is_form_valid, assigns.action == :edit)}
   end
 
   @impl true
@@ -176,7 +176,8 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
       tags ->
         new_tags = Enum.slice(tags, 0..-2//1)
-        {:noreply, assign(socket, :selected_tags, new_tags)}
+        is_form_valid = socket.assigns.form.source.valid? && !Enum.empty?(new_tags)
+        {:noreply, assign(socket, selected_tags: new_tags, is_form_valid: is_form_valid)}
     end
   end
 
@@ -188,7 +189,8 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
   def handle_event("remove-tag", %{"tag" => tag}, socket) do
     new_tags = List.delete(socket.assigns.selected_tags, tag)
-    {:noreply, assign(socket, :selected_tags, new_tags)}
+    is_form_valid = socket.assigns.form.source.valid? && !Enum.empty?(new_tags)
+    {:noreply, assign(socket, selected_tags: new_tags, is_form_valid: is_form_valid)}
   end
 
   @impl true
@@ -208,6 +210,12 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
   @impl true
   def handle_event("save", %{"resource" => resource_params}, socket) do
+    # Add user_id to params for new resources
+    resource_params =
+      if socket.assigns.action == :new,
+        do: Map.put(resource_params, "user_id", socket.assigns.current_user.id),
+        else: resource_params
+
     save_resource(socket, socket.assigns.action, resource_params, socket.assigns.selected_tags)
   end
 
@@ -216,7 +224,10 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
     if tag != "" && tag not in socket.assigns.selected_tags do
       new_tags = socket.assigns.selected_tags ++ [tag]
-      {:noreply, assign(socket, selected_tags: new_tags, current_tag: "")}
+      is_form_valid = socket.assigns.form.source.valid? && !Enum.empty?(new_tags)
+
+      {:noreply,
+       assign(socket, selected_tags: new_tags, current_tag: "", is_form_valid: is_form_valid)}
     else
       {:noreply, assign(socket, current_tag: "")}
     end
@@ -224,17 +235,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
 
   defp save_resource(socket, :edit, resource_params, tag_names) do
     existing_tags = Knowledge.get_tags_by_names(tag_names)
-    existing_names = Enum.map(existing_tags, & &1.name)
-    new_names = tag_names -- existing_names
-
-    new_tags =
-      new_names
-      |> Enum.map(fn name ->
-        with {:ok, tag} <- Knowledge.create_tag(%{name: name}), do: tag
-      end)
-      |> Enum.filter(&match?(%Share.Knowledge.Tag{}, &1))
-
-    all_tags = existing_tags ++ new_tags
+    all_tags = resolve_tags(existing_tags, tag_names)
 
     case Knowledge.update_resource(socket.assigns.resource, resource_params, all_tags) do
       {:ok, _resource} ->
@@ -249,22 +250,8 @@ defmodule ShareWeb.ResourceLive.FormComponent do
   end
 
   defp save_resource(socket, :new, resource_params, tag_names) do
-    # 1. Find existing tags
     existing_tags = Knowledge.get_tags_by_names(tag_names)
-    existing_names = Enum.map(existing_tags, & &1.name)
-
-    # 2. Identify new tags
-    new_names = tag_names -- existing_names
-
-    # 3. Create new tags
-    new_tags =
-      new_names
-      |> Enum.map(fn name ->
-        with {:ok, tag} <- Knowledge.create_tag(%{name: name}), do: tag
-      end)
-      |> Enum.filter(&match?(%Share.Knowledge.Tag{}, &1))
-
-    all_tags = existing_tags ++ new_tags
+    all_tags = resolve_tags(existing_tags, tag_names)
 
     case Knowledge.create_resource(resource_params, all_tags) do
       {:ok, _resource} ->
@@ -276,6 +263,20 @@ defmodule ShareWeb.ResourceLive.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp resolve_tags(existing_tags, tag_names) do
+    existing_names = Enum.map(existing_tags, & &1.name)
+    new_names = tag_names -- existing_names
+
+    new_tags =
+      new_names
+      |> Enum.map(fn name ->
+        with {:ok, tag} <- Knowledge.create_tag(%{name: name}), do: tag
+      end)
+      |> Enum.filter(&match?(%Share.Knowledge.Tag{}, &1))
+
+    existing_tags ++ new_tags
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
