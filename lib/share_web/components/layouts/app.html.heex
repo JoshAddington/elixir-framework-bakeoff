@@ -20,7 +20,7 @@
           <.link
             :if={!@current_user}
             href={~p"/register"}
-            class="px-4 py-2 text-sm font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 shadow-sm transition-all"
+            class="px-4 py-2 text-sm font-semibold text-white bg-slate-900 rounded hover:bg-slate-800 shadow-sm transition-all"
           >
             Get Started
           </.link>
@@ -28,7 +28,7 @@
           <div :if={@current_user} class="flex items-center gap-6">
             <.link
               patch={~p"/new"}
-              class="shrink-0 bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-[0px_4px_16px_rgba(15,23,42,0.1)] hover:bg-[#1e293b] hover:shadow-[0px_8px_24px_rgba(15,23,42,0.2)] transition-all"
+              class="shrink-0 bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-bold shadow-[0px_4px_16px_rgba(15,23,42,0.1)] hover:bg-[#1e293b] hover:shadow-[0px_8px_24px_rgba(15,23,42,0.2)] transition-all"
             >
               Share Resource
             </.link>

@@ -33,7 +33,7 @@
                 placeholder="Search resource..."
                 autocomplete="off"
                 phx-debounce="300"
-                class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-[20px] text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 transition-all shadow-[0px_1px_2px_rgba(0,0,0,0.05)]"
+                class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-[10px] text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 transition-all shadow-[0px_1px_2px_rgba(0,0,0,0.05)]"
               />
             </div>
           </form>
@@ -45,7 +45,7 @@
       <!-- Sidebar -->
       <aside class="w-full lg:w-72 shrink-0">
         <div class="sticky top-28 flex flex-col gap-8">
-          <div class="bg-white p-8 rounded-[32px] shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)] border border-black/5 flex flex-col gap-8">
+          <div class="bg-white p-8 rounded-[16px] shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)] border border-black/5 flex flex-col gap-8">
             <div>
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400">
@@ -81,7 +81,7 @@
                       phx-click="toggle-type"
                       phx-value-type="article"
                       checked={"article" in @active_types}
-                      class="w-5 h-5 rounded-[6px] border-slate-300 bg-white text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
+                      class="w-5 h-5 rounded-[3px] border-slate-300 bg-white text-slate-900 focus:ring-slate-900/10 focus:ring-offset-0 transition-all cursor-pointer"
                     />
                     <span class={[
                       "text-sm font-bold transition-colors",
@@ -187,7 +187,7 @@
           <div
             :for={resource <- @resources}
             phx-click={JS.patch(~p"/resources/#{resource}?#{@current_filters}")}
-            class="group relative bg-white border border-black/5 rounded-[32px] p-8 shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)] hover:shadow-[0px_32px_64px_-16px_rgba(15,23,42,0.12)] hover:-translate-y-2 transition-all duration-500 flex flex-col gap-7 cursor-pointer"
+            class="group relative bg-white border border-black/5 rounded-[16px] p-8 shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)] hover:shadow-[0px_32px_64px_-16px_rgba(15,23,42,0.12)] hover:-translate-y-2 transition-all duration-500 flex flex-col gap-7 cursor-pointer"
           >
             
 <!-- Card Actions (Own resources only) -->
@@ -286,9 +286,9 @@
 <!-- Empty State -->
           <div
             :if={Enum.empty?(@resources)}
-            class="col-span-full py-40 bg-white shadow-[0px_1px_2px_rgba(0,0,0,0.05)] border border-black/5 rounded-[48px] flex flex-col items-center justify-center text-center gap-8"
+            class="col-span-full py-40 bg-white shadow-[0px_1px_2px_rgba(0,0,0,0.05)] border border-black/5 rounded-[24px] flex flex-col items-center justify-center text-center gap-8"
           >
-            <div class="w-24 h-24 bg-[#F9F9F9] rounded-[32px] shadow-inner flex items-center justify-center text-slate-300">
+            <div class="w-24 h-24 bg-[#F9F9F9] rounded-[16px] shadow-inner flex items-center justify-center text-slate-300">
               <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   stroke-linecap="round"

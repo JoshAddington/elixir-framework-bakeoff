@@ -62,7 +62,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
         <div class="flex flex-col gap-2">
           <label class="text-sm font-bold text-slate-700">Tags</label>
           <div class="relative">
-            <div class="flex flex-wrap items-center gap-2 p-1.5 min-h-[46px] bg-white border border-slate-200 rounded-xl focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/10 transition-all">
+            <div class="flex flex-wrap items-center gap-2 p-1.5 min-h-[46px] bg-white border border-slate-200 rounded-lg focus-within:border-slate-900 focus-within:ring-4 focus-within:ring-slate-900/10 transition-all">
               <div
                 :for={tag <- @selected_tags}
                 class="flex items-center gap-1.5 pl-3 pr-1.5 py-1 bg-slate-900 text-white rounded-lg text-xs font-bold transition-colors"
@@ -98,7 +98,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
     <!-- Autocomplete Dropdown -->
             <div
               :if={!Enum.empty?(@suggested_tags)}
-              class="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden py-1"
+              class="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden py-1"
             >
               <button
                 :for={{tag, index} <- Enum.with_index(@suggested_tags)}
@@ -125,7 +125,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
               <textarea
                 name={@form[:url].name}
                 id={@form[:url].id}
-                class="w-full h-[300px] bg-[#0d1117] text-slate-300 font-mono text-sm p-4 rounded-xl border border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all custom-scrollbar resize-none"
+                class="w-full h-[300px] bg-[#0d1117] text-slate-300 font-mono text-sm p-4 rounded-lg border border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all custom-scrollbar resize-none"
                 placeholder="Paste your code snippet here..."
                 spellcheck="false"
               ><%= Phoenix.HTML.Form.normalize_value("textarea", @form[:url].value) %></textarea>
@@ -142,14 +142,14 @@ defmodule ShareWeb.ResourceLive.FormComponent do
         <div class="flex items-center justify-end gap-3 mt-4">
           <.link
             patch={@patch}
-            class="grow text-sm font-bold bg-white border border-slate-200 rounded-xl text-slate-500 text-center hover:text-slate-900 px-4 py-2 transition-colors"
+            class="grow text-sm font-bold bg-white border border-slate-200 rounded-lg text-slate-500 text-center hover:text-slate-900 px-4 py-2 transition-colors"
           >
             Cancel
           </.link>
           <button
             disabled={!@is_form_valid}
             class={[
-              "cursor-pointer grow bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm text-center font-bold shadow-lg shadow-slate-900/10 transition-all",
+              "cursor-pointer grow bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm text-center font-bold shadow-lg shadow-slate-900/10 transition-all",
               @is_form_valid && "hover:bg-slate-800 hover:-translate-y-0.5",
               !@is_form_valid && "opacity-50 cursor-not-allowed"
             ]}
@@ -328,7 +328,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
       {:ok, _resource} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Resource updated successfully!")
+         |> put_flash(:info, "Resource updated!")
          |> push_navigate(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
