@@ -73,9 +73,12 @@ defmodule ShareWeb.ResourceLive.FormComponent do
                   phx-click="remove-tag"
                   phx-value-tag={tag}
                   phx-target={@myself}
-                  class="p-0.5 rounded-md text-slate-400 hover:text-white transition-all"
+                  class="p-0.5 rounded-md text-white transition-all group/remove"
                 >
-                  <.icon name="hero-x-mark" class="size-3 stroke-[3]" />
+                  <.icon
+                    name="hero-x-mark"
+                    class="size-3 group-hover/remove:size-5 transition-all transform group-hover/remove:scale-110"
+                  />
                 </button>
               </div>
               <input
