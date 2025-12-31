@@ -534,8 +534,8 @@ defmodule ShareWeb.CoreComponents do
         aria-modal="true"
         tabindex="0"
       >
-        <div class="flex min-h-full items-center justify-center p-4 sm:p-6">
-          <div class="w-full max-w-xl overflow-hidden rounded-2xl bg-white p-4 shadow-xl ring-1 ring-zinc-900/5 sm:p-6 transition-all transform scale-100 opacity-100 relative pointer-events-auto">
+        <div class="flex min-h-full items-center justify-center sm:p-6">
+          <div class="w-full h-screen sm:h-auto sm:max-w-xl overflow-hidden sm:rounded-2xl bg-white p-4 shadow-xl ring-1 ring-zinc-900/5 sm:p-6 transition-all transform scale-100 opacity-100 relative pointer-events-auto">
             <button
               type="button"
               class="absolute top-6 right-6 z-10 p-2 rounded-full bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-slate-900/10"
@@ -655,12 +655,12 @@ defmodule ShareWeb.CoreComponents do
       />
       <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full sm:pl-10">
             <div
               id={"#{@id}-content"}
-              class="pointer-events-auto w-screen max-w-[518px] transform transition ease-in-out duration-500 sm:duration-700 translate-x-full"
+              class="pointer-events-auto w-screen sm:max-w-[518px] transform transition ease-in-out duration-500 sm:duration-700 translate-x-full"
             >
-              <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl py-6 relative">
+              <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl py-6 relative sm:rounded-l-2xl">
                 <button
                   type="button"
                   class="absolute top-6 right-6 z-10 p-2 rounded-full bg-white text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-slate-900/10"
