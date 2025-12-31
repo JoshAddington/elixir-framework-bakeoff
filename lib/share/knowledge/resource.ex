@@ -8,6 +8,7 @@ defmodule Share.Knowledge.Resource do
     field :url, :string
     # "article", "snippet", "resource"
     field :type, :string
+    field :snippet, :string
     belongs_to :user, Share.Accounts.User
     many_to_many :tags, Share.Knowledge.Tag, join_through: "resources_tags", on_replace: :delete
 
@@ -17,8 +18,25 @@ defmodule Share.Knowledge.Resource do
   @doc false
   def changeset(resource, attrs, tags \\ []) do
     resource
-    |> cast(attrs, [:title, :description, :url, :type, :user_id])
-    |> validate_required([:title, :description, :url, :type, :user_id])
+    |> cast(attrs, [:title, :description, :url, :type, :user_id, :snippet])
+    |> validate_required([:title, :description, :type, :user_id])
+    |> validate_conditional_fields()
     |> put_assoc(:tags, tags)
+  end
+
+  defp validate_conditional_fields(changeset) do
+    type = get_field(changeset, :type)
+
+    case type do
+      "snippet" ->
+        changeset
+        |> validate_required([:snippet])
+        |> put_change(:url, nil)
+
+      _ ->
+        changeset
+        |> validate_required([:url])
+        |> put_change(:snippet, nil)
+    end
   end
 end

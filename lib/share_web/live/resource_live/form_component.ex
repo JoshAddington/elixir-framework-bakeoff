@@ -118,25 +118,31 @@ defmodule ShareWeb.ResourceLive.FormComponent do
           </div>
         </div>
 
-        <div class="flex flex-col gap-2">
-          <%= if Ecto.Changeset.get_field(@form.source, :type) == "snippet" do %>
-            <label class="text-sm font-bold text-slate-700">Code Snippet</label>
-            <div class="relative">
-              <textarea
-                name={@form[:url].name}
-                id={@form[:url].id}
-                class="w-full h-[300px] bg-[#0d1117] text-slate-300 font-mono text-sm p-4 rounded-lg border border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all custom-scrollbar resize-none"
-                placeholder="Paste your code snippet here..."
-                spellcheck="false"
-              ><%= Phoenix.HTML.Form.normalize_value("textarea", @form[:url].value) %></textarea>
-              <div class="absolute top-3 right-3 px-2 py-1 rounded bg-white/10 text-[10px] font-mono text-white/50 pointer-events-none">
-                CODE
-              </div>
+        <div
+          :if={Ecto.Changeset.get_field(@form.source, :type) == "snippet"}
+          class="flex flex-col gap-2"
+        >
+          <label class="text-sm font-bold text-slate-700">Code Snippet</label>
+          <div class="relative">
+            <textarea
+              name={@form[:snippet].name}
+              id={@form[:snippet].id}
+              class="w-full h-[300px] bg-[#0d1117] text-slate-300 font-mono text-sm p-4 rounded-lg border border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all custom-scrollbar resize-none"
+              placeholder="Paste your code snippet here..."
+              spellcheck="false"
+            ><%= Phoenix.HTML.Form.normalize_value("textarea", @form[:snippet].value) %></textarea>
+            <div class="absolute top-3 right-3 px-2 py-1 rounded bg-white/10 text-[10px] font-mono text-white/50 pointer-events-none">
+              CODE
             </div>
-          <% else %>
-            <label class="text-sm font-bold text-slate-700">URL</label>
-            <.input field={@form[:url]} type="text" placeholder="example.com/article" />
-          <% end %>
+          </div>
+        </div>
+
+        <div
+          :if={Ecto.Changeset.get_field(@form.source, :type) in ["article", "resource"]}
+          class="flex flex-col gap-2"
+        >
+          <label class="text-sm font-bold text-slate-700">URL</label>
+          <.input field={@form[:url]} type="text" placeholder="example.com/article" />
         </div>
 
         <div class="flex items-center justify-end gap-3 mt-4">
@@ -296,6 +302,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
         do: Map.put(resource_params, "user_id", socket.assigns.current_user.id),
         else: resource_params
 
+    IO.inspect(resource_params)
     save_resource(socket, socket.assigns.action, resource_params, socket.assigns.selected_tags)
   end
 

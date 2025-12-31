@@ -27,7 +27,7 @@
             Get Started
           </.link>
 
-          <div :if={@current_user} class="flex items-center gap-6">
+          <div :if={@current_user} class="flex items-center gap-2">
             <.link
               patch={~p"/new"}
               class="shrink-0 bg-slate-900 text-white px-5 py-2 rounded-lg text-xs font-bold shadow-[0px_4px_16px_rgba(15,23,42,0.1)] hover:bg-[#1e293b] hover:shadow-[0px_8px_24px_rgba(15,23,42,0.2)] transition-all"
@@ -38,14 +38,13 @@
             <div class="relative" id="user-menu">
               <button
                 phx-click={JS.toggle(to: "#user-dropdown")}
-                class="flex items-center gap-3 pl-6 border-l border-slate-200 cursor-pointer hover:opacity-80 transition-opacity"
+                class="flex items-center gap-1 pl-2 cursor-pointer hover:opacity-80 transition-opacity"
               >
+                <.icon name="hero-user-circle" class="w-8 h-8 text-slate-400" />
                 <div class="flex flex-col items-end">
-                  <span class="text-xs font-bold text-slate-900">{@current_user.full_name}</span>
-                  <span class="text-[10px] text-slate-500 font-medium">Member</span>
-                </div>
-                <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-xs text-white font-bold ring-2 ring-slate-50 ring-offset-2">
-                  {String.at(@current_user.full_name, 0)}
+                  <span class="text-xs font-bold text-slate-900">
+                    {String.split(@current_user.full_name) |> List.first()}
+                  </span>
                 </div>
               </button>
 

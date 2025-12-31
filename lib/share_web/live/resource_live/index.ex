@@ -15,6 +15,9 @@ defmodule ShareWeb.ResourceLive.Index do
      |> assign(:active_tag, nil)
      |> assign(:active_user_id, nil)
      |> assign(:search_query, nil)
+     |> assign(:show_mobile_filters, false)
+     |> assign(:pending_types, [])
+     |> assign(:pending_tag, nil)
      |> assign(:deleting_resource, nil)}
   end
 
@@ -138,6 +141,55 @@ defmodule ShareWeb.ResourceLive.Index do
   def handle_event("search", %{"q" => query}, socket) do
     params = socket.assigns.current_filters |> Map.put("q", query)
     {:noreply, push_patch(socket, to: ~p"/?#{params}", replace: true)}
+  end
+
+  def handle_event("open-mobile-filters", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_mobile_filters, true)
+     |> assign(:pending_types, socket.assigns.active_types)
+     |> assign(:pending_tag, socket.assigns.active_tag)}
+  end
+
+  def handle_event("close-mobile-filters", _params, socket) do
+    {:noreply, assign(socket, :show_mobile_filters, false)}
+  end
+
+  def handle_event("toggle-pending-type", %{"type" => type}, socket) do
+    pending_types = socket.assigns.pending_types
+
+    new_types =
+      if type in pending_types do
+        pending_types -- [type]
+      else
+        [type | pending_types]
+      end
+
+    {:noreply, assign(socket, :pending_types, new_types)}
+  end
+
+  def handle_event("select-pending-tag", %{"tag" => tag}, socket) do
+    new_tag = if tag == socket.assigns.pending_tag, do: nil, else: tag
+    {:noreply, assign(socket, :pending_tag, new_tag)}
+  end
+
+  def handle_event("reset-pending-filters", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:pending_types, [])
+     |> assign(:pending_tag, nil)}
+  end
+
+  def handle_event("apply-mobile-filters", _params, socket) do
+    params =
+      socket.assigns.current_filters
+      |> Map.put("types", socket.assigns.pending_types)
+      |> Map.put("tag", socket.assigns.pending_tag)
+
+    {:noreply,
+     socket
+     |> assign(:show_mobile_filters, false)
+     |> push_patch(to: ~p"/?#{params}")}
   end
 
   defp format_timestamp(dt) do
