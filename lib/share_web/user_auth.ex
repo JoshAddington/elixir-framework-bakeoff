@@ -12,6 +12,12 @@ defmodule ShareWeb.UserAuth do
     |> redirect(to: ~p"/")
   end
 
+  def log_out_user(conn) do
+    conn
+    |> renew_session()
+    |> redirect(to: ~p"/")
+  end
+
   def fetch_current_user(conn, _opts) do
     user_id = get_session(conn, :user_id)
     user = user_id && Accounts.get_user(user_id)

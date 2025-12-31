@@ -4,7 +4,9 @@
       <div class="flex items-center gap-8">
         <a href="/" class="flex items-center gap-3 group transition-transform hover:scale-105">
           <ShareWeb.Components.icon classname="w-[48px] h-[48px]" />
-          <span class="font-bold text-lg text-slate-900 tracking-tight">Method Know</span>
+          <span class="hidden sm:block font-bold text-lg text-slate-900 tracking-tight">
+            Method Know
+          </span>
         </a>
       </div>
 
@@ -33,13 +35,44 @@
               Share Resource
             </.link>
 
-            <div class="flex items-center gap-3 pl-6 border-l border-slate-200">
-              <div class="flex flex-col items-end">
-                <span class="text-xs font-bold text-slate-900">{@current_user.full_name}</span>
-                <span class="text-[10px] text-slate-500 font-medium">Member</span>
-              </div>
-              <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-xs text-white font-bold ring-2 ring-slate-50 ring-offset-2">
-                {String.at(@current_user.full_name, 0)}
+            <div class="relative" id="user-menu">
+              <button
+                phx-click={JS.toggle(to: "#user-dropdown")}
+                class="flex items-center gap-3 pl-6 border-l border-slate-200 cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <div class="flex flex-col items-end">
+                  <span class="text-xs font-bold text-slate-900">{@current_user.full_name}</span>
+                  <span class="text-[10px] text-slate-500 font-medium">Member</span>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-xs text-white font-bold ring-2 ring-slate-50 ring-offset-2">
+                  {String.at(@current_user.full_name, 0)}
+                </div>
+              </button>
+
+              <div
+                id="user-dropdown"
+                class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-[0px_8px_24px_-4px_rgba(15,23,42,0.12)] border border-black/5 py-2 z-50"
+                phx-click-away={JS.hide(to: "#user-dropdown")}
+              >
+                <.link
+                  patch={~p"/?user_id=#{@current_user.id}"}
+                  phx-click={JS.hide(to: "#user-dropdown")}
+                  class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  <.icon name="hero-bookmark" class="w-4 h-4 text-slate-400" />
+                  <span>Your Shared Resources</span>
+                </.link>
+
+                <div class="h-px bg-slate-100 my-1"></div>
+
+                <.link
+                  href={~p"/logout"}
+                  method="delete"
+                  class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                >
+                  <.icon name="hero-arrow-right-on-rectangle" class="w-4 h-4" />
+                  <span>Log Out</span>
+                </.link>
               </div>
             </div>
           </div>

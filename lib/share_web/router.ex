@@ -32,6 +32,7 @@ defmodule ShareWeb.Router do
       post "/login", AuthController, :create_session
       get "/register", AuthController, :signup
       post "/register", AuthController, :create
+      delete "/logout", AuthController, :logout
     end
   end
 
