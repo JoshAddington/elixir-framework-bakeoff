@@ -41,6 +41,13 @@ const liveSocket = new LiveSocket("/live", Socket, {
       highlight() {
         hljs.highlightElement(this.el)
       }
+    },
+    FlashAutoDismiss: {
+      mounted() {
+        setTimeout(() => {
+          this.pushEvent("lv:clear-flash", { key: "info" })
+        }, 5000)
+      }
     }
   },
 })

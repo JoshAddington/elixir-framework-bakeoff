@@ -7,7 +7,6 @@ defmodule ShareWeb.HubBanner do
     router: ShareWeb.Router,
     statics: ShareWeb.static_paths()
 
-  alias Phoenix.LiveView.JS
   import ShareWeb.CoreComponents, only: [icon: 1]
 
   @doc """
@@ -21,8 +20,8 @@ defmodule ShareWeb.HubBanner do
     <div
       :if={msg = Phoenix.Flash.get(@flash, :info)}
       id="hub-banner"
-      phx-mounted={JS.show(to: "#hub-banner")}
-      class="mb-8 w-full flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 bg-white rounded-xl border border-black/5 shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)]"
+      phx-hook="FlashAutoDismiss"
+      class="animate-slide-down mb-8 w-full flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 bg-white rounded-xl border border-black/5 shadow-[0px_1px_3px_rgba(0,0,0,0.02),0px_8px_24px_-4px_rgba(15,23,42,0.04)]"
     >
       <div class="flex items-center gap-4">
         <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
