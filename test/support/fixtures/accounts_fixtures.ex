@@ -11,9 +11,9 @@ defmodule Share.AccountsFixtures do
     {:ok, user} =
       attrs
       |> Enum.into(%{
-        email: "some email",
+        email: "user#{System.unique_integer([:positive])}@example.com",
         full_name: "some full_name",
-        password_hash: "some password_hash"
+        password: "password1234"
       })
       |> Share.Accounts.create_user()
 

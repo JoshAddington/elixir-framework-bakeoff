@@ -6,6 +6,7 @@ defmodule ShareWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug :fetch_flash
     plug :fetch_live_flash
     plug :put_root_layout, html: {ShareWeb.Layouts, :root}
     plug :put_layout, html: {ShareWeb.Layouts, :app}
