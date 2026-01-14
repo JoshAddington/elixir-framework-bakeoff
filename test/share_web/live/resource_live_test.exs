@@ -110,6 +110,14 @@ defmodule ShareWeb.ResourceLiveTest do
       {:ok, _view, html} = live(conn, ~p"/resources/#{resource.id}")
       assert html =~ resource.title
     end
+
+    test "shows snippet with correct language class", %{conn: conn, user: user} do
+      snippet =
+        resource_fixture(user: user, type: "snippet", language: "rust", snippet: "fn main() {}")
+
+      {:ok, _view, html} = live(conn, ~p"/resources/#{snippet.id}")
+      assert html =~ "language-rust"
+    end
   end
 
   describe "FormComponent" do
