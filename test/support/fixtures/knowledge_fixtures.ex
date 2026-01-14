@@ -20,12 +20,17 @@ defmodule Share.KnowledgeFixtures do
         type: "article",
         url: "https://example.com",
         snippet: nil,
+        language: nil,
         user_id: user.id
       })
       |> (fn attrs ->
             if attrs[:type] == "snippet",
               do:
-                Map.merge(attrs, %{snippet: attrs[:snippet] || "main = putStrLn \"hi\"", url: nil}),
+                Map.merge(attrs, %{
+                  snippet: attrs[:snippet] || "main = putStrLn \"hi\"",
+                  language: attrs[:language] || "haskell",
+                  url: nil
+                }),
               else: attrs
           end).()
       |> Share.Knowledge.create_resource()
