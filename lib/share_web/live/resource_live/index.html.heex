@@ -6,10 +6,12 @@
 
       <div class="flex flex-col gap-2">
         <h1 class="text-[32px] sm:text-[40px] font-bold text-slate-900 tracking-[-0.03em] m-0 leading-tight">
-          {if @active_user_id, do: "Your Resources", else: "Discover Resources"}
+          {if @current_user && @active_user_id == to_string(@current_user.id),
+            do: "Your Resources",
+            else: "Discover Resources"}
         </h1>
         <p
-          :if={!@active_user_id}
+          :if={!(@current_user && @active_user_id == to_string(@current_user.id))}
           class="text-slate-500 text-lg sm:text-xl font-medium max-w-2xl leading-relaxed"
         >
           Explore shared knowledge from our community
@@ -187,9 +189,10 @@
 <!-- Main Content -->
       <main class="flex-1 min-w-0">
         <div class="flex items-center gap-2 text-slate-400 font-bold text-[13px]  tracking-wider mb-4">
-          {Enum.count(@resources)} resources {if @active_user_id,
-            do: "you've added",
-            else: "found"}
+          {Enum.count(@resources)} resources {if @current_user &&
+                                                   @active_user_id == to_string(@current_user.id),
+                                                 do: "you've added",
+                                                 else: "found"}
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div
