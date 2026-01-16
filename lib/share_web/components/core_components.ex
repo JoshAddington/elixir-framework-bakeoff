@@ -76,7 +76,7 @@ defmodule ShareWeb.CoreComponents do
       ]}>
         <div
           :if={@kind == :info}
-          class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center shrink-0"
+          class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center shrink-0"
         >
           <.icon name="hero-check" class="w-5 h-5 text-white stroke-2" />
         </div>
