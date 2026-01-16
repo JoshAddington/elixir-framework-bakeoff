@@ -91,6 +91,7 @@ defmodule ShareWeb.ResourceLive.FormComponent do
                 phx-blur="add-tag"
                 phx-target={@myself}
                 phx-change="tag-input"
+                phx-hook="TagInput"
                 class="flex-1 min-w-[120px] bg-transparent border-none focus:ring-0 text-sm text-slate-900 placeholder:text-slate-400 p-1"
               />
             </div>
@@ -332,9 +333,13 @@ defmodule ShareWeb.ResourceLive.FormComponent do
       {:noreply,
        socket
        |> assign(selected_tags: new_tags, current_tag: "", is_form_valid: is_form_valid)
-       |> assign(suggested_tags: [], focused_index: -1)}
+       |> assign(suggested_tags: [], focused_index: -1)
+       |> push_event("clear-tag-input", %{})}
     else
-      {:noreply, assign(socket, current_tag: "", suggested_tags: [], focused_index: -1)}
+      {:noreply,
+       socket
+       |> assign(current_tag: "", suggested_tags: [], focused_index: -1)
+       |> push_event("clear-tag-input", %{})}
     end
   end
 

@@ -48,6 +48,17 @@ const liveSocket = new LiveSocket("/live", Socket, {
           this.pushEvent("lv:clear-flash", { key: "info" })
         }, 5000)
       }
+    },
+    TagInput: {
+      mounted() {
+        this.el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault()
+            // Clear after LiveView processes the event
+            setTimeout(() => { this.el.value = "" }, 50)
+          }
+        })
+      }
     }
   },
 })
