@@ -19,21 +19,39 @@ defmodule ShareWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Public routes (no authentication required)
   scope "/", ShareWeb do
     pipe_through :browser
 
-    live_session :default,
+    get "/login", AuthController, :login
+    post "/login", AuthController, :create_session
+    get "/register", AuthController, :signup
+    post "/register", AuthController, :create
+  end
+
+  # Public routes with optional user
+  scope "/", ShareWeb do
+    pipe_through :browser
+
+    live_session :public,
       on_mount: [{ShareWeb.UserAuth, :mount_current_user}],
       layout: {ShareWeb.Layouts, :app} do
       live "/", ResourceLive.Index, :index
-      live "/new", ResourceLive.Index, :new
       live "/resources/:id", ResourceLive.Index, :show
+    end
+  end
+
+  # Authenticated routes (require login)
+  scope "/", ShareWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    delete "/logout", AuthController, :logout
+
+    live_session :authenticated,
+      on_mount: [{ShareWeb.UserAuth, :ensure_authenticated}],
+      layout: {ShareWeb.Layouts, :app} do
+      live "/new", ResourceLive.Index, :new
       live "/resources/:id/edit", ResourceLive.Index, :edit
-      get "/login", AuthController, :login
-      post "/login", AuthController, :create_session
-      get "/register", AuthController, :signup
-      post "/register", AuthController, :create
-      delete "/logout", AuthController, :logout
     end
   end
 

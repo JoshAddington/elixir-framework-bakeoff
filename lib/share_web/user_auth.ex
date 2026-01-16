@@ -24,8 +24,34 @@ defmodule ShareWeb.UserAuth do
     assign(conn, :current_user, user)
   end
 
+  def require_authenticated_user(conn, _opts) do
+    if conn.assigns[:current_user] do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in to access this page.")
+      |> redirect(to: ~p"/login")
+      |> halt()
+    end
+  end
+
   def on_mount(:mount_current_user, _params, session, socket) do
     {:cont, mount_current_user(socket, session)}
+  end
+
+  def on_mount(:ensure_authenticated, _params, session, socket) do
+    socket = mount_current_user(socket, session)
+
+    if socket.assigns.current_user do
+      {:cont, socket}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+        |> Phoenix.LiveView.redirect(to: ~p"/login")
+
+      {:halt, socket}
+    end
   end
 
   defp mount_current_user(socket, session) do
